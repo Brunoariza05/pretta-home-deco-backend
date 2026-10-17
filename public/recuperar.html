@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cambiar clave — Pretta Home Deco</title>
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/admin.css">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+</head>
+<body class="body-admin">
+
+  <div class="contenedor-login">
+    <div class="tarjeta-login">
+      <div class="login-encabezado">
+        <h2>Pretta Home Deco</h2>
+        <p>Cambiar clave</p>
+      </div>
+      <form id="formEmail">
+        <p class="texto-ayuda-recuperar">Ingresá tu correo autorizado y te enviamos un código de 6 números.</p>
+        <div class="grupo-campo">
+          <label for="recEmail">Correo</label>
+          <input type="email" id="recEmail" required autocomplete="email" placeholder="tucorreo@ejemplo.com">
+        </div>
+        <button type="submit" class="btn btn-salvia btn-ancho">Enviar código</button>
+      </form>
+      <form id="formCodigo" hidden>
+        <p class="texto-ayuda-recuperar">Te enviamos un código a <strong id="recEmailMostrado"></strong>. Vale 10 minutos.</p>
+        <div class="grupo-campo">
+          <label for="recCodigo">Código de 6 números</label>
+          <input type="text" id="recCodigo" class="input-codigo" required inputmode="numeric" pattern="[0-9]{6}" maxlength="6" autocomplete="one-time-code" placeholder="000000">
+        </div>
+        <button type="submit" class="btn btn-salvia btn-ancho">Verificar código</button>
+        <button type="button" class="btn-texto-recuperar" id="btnReenviar" disabled>Reenviar código</button>
+      </form>
+      <form id="formNuevaClave" hidden>
+        <p class="texto-ayuda-recuperar">Código correcto. Elegí tu clave nueva.</p>
+        <div class="grupo-campo">
+          <label for="recClaveNueva">Clave nueva (mínimo 6 caracteres)</label>
+          <input type="password" id="recClaveNueva" required minlength="6" autocomplete="new-password">
+        </div>
+        <div class="grupo-campo">
+          <label for="recClaveRepetida">Repetí la clave nueva</label>
+          <input type="password" id="recClaveRepetida" required minlength="6" autocomplete="new-password">
+        </div>
+        <button type="submit" class="btn btn-salvia btn-ancho">Guardar clave nueva</button>
+      </form>
+      <div id="pasoExito" hidden>
+        <p class="texto-ayuda-recuperar">✔ Tu clave se cambió correctamente.</p>
+        <a href="admin.html" class="btn btn-salvia btn-ancho">Ir a ingresar</a>
+      </div>
+
+      <p id="mensajeRecuperar" class="mensaje-recuperar" role="alert" aria-live="polite"></p>
+      <a href="admin.html" class="enlace-volver-login">← Volver al login</a>
+    </div>
+  </div>
+
+  <script src="js/recuperar.js"></script>
+</body>
+</html>

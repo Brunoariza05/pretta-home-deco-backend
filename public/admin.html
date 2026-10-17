@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel de Gestión — Pretta Home Deco</title>
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/admin.css">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+</head>
+<body class="body-admin">
+
+  <div id="seccionLogin" class="contenedor-login">
+    <div class="tarjeta-login">
+      <div class="login-encabezado">
+        <h2>Pretta Home Deco</h2>
+        <p>Panel de Administración</p>
+      </div>
+      <form id="formLogin">
+        <div class="grupo-campo">
+          <label for="loginUsuario">Usuario</label>
+          <input type="text" id="loginUsuario" required placeholder="Ingresá tu usuario">
+        </div>
+        <div class="grupo-campo">
+          <label for="loginPassword">Contraseña</label>
+          <input type="password" id="loginPassword" required placeholder="Ingresá tu contraseña">
+        </div>
+        <a href="recuperar.html" class="btn btn-secundario btn-ancho btn-cambiar-clave">Cambiar clave</a>
+        <button type="submit" class="btn btn-salvia btn-ancho">Iniciar Sesión</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="seccionDashboard" class="contenedor-dashboard" style="display: none;">
+    <header class="encabezado-admin">
+      <div class="envoltorio-admin">
+        <a href="#" class="marca">Pretta Admin</a>
+        <div class="admin-acciones-usuario">
+          <button type="button" class="btn btn-secundario btn-sm" id="btnAbrirConfig">Editar Página Principal</button>
+          <button type="button" class="btn btn-secundario btn-sm" id="btnAbrirCambiarPass">Cambiar Contraseña</button>
+          <button type="button" class="btn btn-vaciar" id="btnCerrarSesion">Cerrar Sesión</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="envoltorio-admin dashboard-grid">
+      <section class="panel-columna">
+        <div class="panel-encabezado-col">
+          <h2>Listado de Productos</h2>
+          <div class="botones-columna">
+            <button type="button" class="btn btn-salvia btn-sm" id="btnAbrirCrearProducto">+ Cargar Producto</button>
+          </div>
+        </div>
+
+        <div class="tabla-contenedor">
+          <table class="tabla-admin">
+            <thead>
+              <tr>
+                <th>Imagen</th>
+                <th>Nombre</th>
+                <th>Precio</th>
+                <th>Stock</th>
+                <th>Estado</th>
+                <th>Visible</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="tablaProductosBody">
+              <tr><td colspan="7" class="texto-centro">Cargando productos...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="panel-columna">
+        <div class="panel-encabezado-col">
+          <h2>Listado de Ventas</h2>
+          <div class="botones-columna">
+            <button type="button" class="btn btn-salvia btn-sm" id="btnAbrirCrearVenta">+ Cargar Venta</button>
+          </div>
+        </div>
+
+        <div class="contenedor-filtros-ventas">
+          <div class="fila-filtros">
+            <div class="grupo-campo">
+              <label for="filtroFechaDesde">Desde:</label>
+              <input type="date" id="filtroFechaDesde">
+            </div>
+            <div class="grupo-campo">
+              <label for="filtroFechaHasta">Hasta:</label>
+              <input type="date" id="filtroFechaHasta">
+            </div>
+          </div>
+
+          <div class="fila-filtros">
+            <div class="grupo-campo">
+              <label for="filtroOrden">Filtro por fecha y precio:</label>
+              <select id="filtroOrden">
+                <option value="">Por defecto</option>
+                <option value="fecha_desc">Fecha: más reciente a más antigua</option>
+                <option value="fecha_asc">Fecha: más antigua a más reciente</option>
+                <option value="total_desc">Precio: mayor a menor</option>
+                <option value="total_asc">Precio: menor a mayor</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="tabla-contenedor">
+          <table class="tabla-admin">
+            <thead>
+              <tr>
+                <th>Código</th>
+                <th>Productos</th>
+                <th>Total</th>
+                <th>Fecha</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="tablaVentasBody">
+              <tr><td colspan="5" class="texto-centro">Cargando ventas...</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="acciones-exportar">
+          <button type="button" id="btnGenerarPDF" class="btn btn-secundario">📄 Exportar PDF Filtrado</button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="fondo-modal" id="fondoModalProducto"></div>
+  <div class="modal-detalle modal-admin" id="modalProducto" role="dialog">
+    <button class="cerrar-modal" id="btnCerrarModalProducto">&times;</button>
+    <h2 id="modalProductoTitulo">Cargar Producto</h2>
+    <form id="formProducto" enctype="multipart/form-data">
+      <input type="hidden" id="prodId">
+      <div class="grupo-campo">
+        <label for="prodNombre">Nombre *</label>
+        <input type="text" id="prodNombre" required>
+      </div>
+      <div class="grupo-campo">
+        <label for="prodDescripcion">Descripción *</label>
+        <textarea id="prodDescripcion" rows="3" required></textarea>
+      </div>
+      <div class="grid-2-col">
+        <div class="grupo-campo">
+          <label for="prodPrecio">Precio ($) *</label>
+          <input type="number" id="prodPrecio" min="0" step="1" required>
+        </div>
+        <div class="grupo-campo">
+          <label for="prodStock">Stock Inicial *</label>
+          <input type="number" id="prodStock" min="0" step="1" required>
+        </div>
+      </div>
+      <div class="grupo-campo">
+        <label>Fotos del producto (hasta 5)</label>
+        <div id="prodImagenesExistentes" class="miniaturas-producto"></div>
+        <input type="file" id="prodImagenes" multiple accept="image/*">
+      </div>
+      <div class="grupo-campo checkbox-campo">
+        <label>
+          <input type="checkbox" id="prodActivo" checked> Producto visible en tienda
+        </label>
+      </div>
+      <button type="submit" class="btn btn-salvia btn-ancho">Guardar Producto</button>
+    </form>
+  </div>
+
+  <div class="fondo-modal" id="fondoModalVenta"></div>
+  <div class="modal-detalle modal-admin" id="modalVenta" role="dialog">
+    <button class="cerrar-modal" id="btnCerrarModalVenta">&times;</button>
+    <h2 id="tituloModalVenta">Registrar Venta</h2>
+    <form id="formVenta">
+      <div id="lineasVentaContenedor"></div>
+      <button type="button" class="btn btn-secundario btn-sm" id="btnAgregarLineaVenta" style="margin-bottom: 16px;">+ Agregar otro producto</button>
+
+      <div class="resumen-venta-modal">
+        <span>Total Venta:</span>
+        <strong id="totalVentaModal">$0</strong>
+      </div>
+
+      <button type="submit" class="btn btn-salvia btn-ancho">Confirmar Venta</button>
+    </form>
+  </div>
+
+  <div class="fondo-modal" id="fondoModalPass"></div>
+  <div class="modal-detalle modal-admin" id="modalPass" role="dialog">
+    <button class="cerrar-modal" id="btnCerrarModalPass">&times;</button>
+    <h2>Cambiar Contraseña</h2>
+    <form id="formCambiarPass">
+      <div class="grupo-campo">
+        <label for="passActual">Contraseña Actual *</label>
+        <input type="password" id="passActual" required>
+      </div>
+      <div class="grupo-campo">
+        <label for="passNueva">Nueva Contraseña *</label>
+        <input type="password" id="passNueva" required minlength="6">
+      </div>
+      <button type="submit" class="btn btn-salvia btn-ancho">Actualizar Contraseña</button>
+    </form>
+  </div>
+
+  <div class="fondo-modal" id="fondoModalConfig"></div>
+  <div class="modal-detalle modal-admin" id="modalConfig" role="dialog">
+    <button class="cerrar-modal" id="btnCerrarModalConfig">&times;</button>
+    <h2>Editar Página Principal</h2>
+    <form id="formConfig" enctype="multipart/form-data">
+      <div class="grupo-campo">
+        <label for="cfgTitulo">Título *</label>
+        <input type="text" id="cfgTitulo" required>
+      </div>
+      <div class="grupo-campo">
+        <label for="cfgSubtitulo">Subtítulo *</label>
+        <textarea id="cfgSubtitulo" rows="2" required></textarea>
+      </div>
+
+      <div class="grupo-campo">
+        <label for="cfgImagen">Imagen del inicio</label>
+        <input type="file" id="cfgImagen" accept="image/*">
+        <div id="cfgImagenPreview" class="preview-imagenes-config"></div>
+      </div>
+
+      <div class="grupo-campo">
+        <label>Mensajes de la franja de valores</label>
+        <div id="mensajesConfigContenedor"></div>
+        <button type="button" class="btn btn-secundario btn-sm" id="btnAgregarMensajeConfig">+ Agregar mensaje</button>
+      </div>
+
+      <div class="grid-2-col">
+        <div class="grupo-campo">
+          <label for="cfgWhatsapp">Número de WhatsApp *</label>
+          <input type="text" id="cfgWhatsapp" placeholder="5493516519583" required>
+        </div>
+        <div class="grupo-campo">
+          <label for="cfgInstagram">Link de Instagram</label>
+          <input type="url" id="cfgInstagram">
+        </div>
+      </div>
+      <div class="grupo-campo">
+        <label for="cfgFacebook">Link de Facebook</label>
+        <input type="url" id="cfgFacebook">
+      </div>
+
+      <button type="submit" class="btn btn-salvia btn-ancho">Guardar cambios</button>
+    </form>
+  </div>
+
+  <div class="aviso" data-aviso>
+    <span class="punto-salvia"></span>
+    <span>Mensaje del sistema</span>
+  </div>
+
+  <script src="js/admin.js"></script>
+</body>
+</html>
