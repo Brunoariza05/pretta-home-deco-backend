@@ -459,7 +459,6 @@
   .selector-orden { flex: 1 1 100%; }
 }
 
-/* Tablet y celular grande: el inicio pasa a una sola columna */
 @media (max-width: 900px) {
   .hero-contenido { display: grid !important; grid-template-columns: minmax(0, 1fr) !important; gap: 28px !important; text-align: center; }
   .hero-acciones { justify-content: center; flex-wrap: wrap; }
@@ -469,7 +468,6 @@
   .modal-contenido-grid { grid-template-columns: minmax(0, 1fr) !important; }
 }
 
-/* Productos: 3 por fila en tablet, 2 en celular, 1 en pantallas muy chicas */
 @media (min-width: 561px) and (max-width: 1024px) {
   .grilla-productos { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; gap: 16px !important; }
 }
@@ -503,3 +501,29 @@
   .pie .envoltorio { flex-direction: column; text-align: center; gap: 12px; }
   .pie-enlaces { justify-content: center; flex-wrap: wrap; }
 }
+
+.nav-principal.nav-oculta { visibility: hidden; transition: visibility 0s linear .35s; }
+ 
+.modal-detalle { max-height: 88vh; overflow-y: auto; }
+.modal-detalle .cerrar-modal {
+  position: sticky !important; top: 0; right: auto !important; left: auto !important;
+  float: none; display: flex; align-items: center; justify-content: center;
+  width: 36px; height: 36px; padding: 0; margin: 0 0 -36px auto;
+  border: none; border-radius: 50%; background: rgba(255, 255, 255, .95);
+  box-shadow: 0 1px 6px rgba(0, 0, 0, .25); color: #3e2e22;
+  font-size: 24px; line-height: 1; cursor: pointer; z-index: 5;
+}
+ 
+@media (max-width: 768px) {
+  .modal-detalle { width: min(92vw, 440px) !important; max-height: 82vh !important; padding: 14px !important; }
+  .modal-contenido-grid { gap: 12px !important; }
+  .modal-imagen-principal { max-height: 32vh; display: flex; align-items: center; justify-content: center; overflow: hidden; border-radius: 12px; }
+  .modal-imagen-principal img { width: 100%; height: 100%; max-height: 32vh; object-fit: contain; }
+  .modal-miniaturas { gap: 8px; }
+  .btn-miniatura-modal { width: 50px; height: 50px; }
+  .btn-miniatura-modal img { width: 100%; height: 100%; object-fit: cover; }
+  .modal-col-info h2 { font-size: 1.1rem; margin: 0 0 4px; }
+  .modal-precio { font-size: 1.05rem; margin: 0 0 8px; }
+  .modal-descripcion { font-size: .9rem; margin-bottom: 8px; }
+}
+ 

@@ -12,6 +12,8 @@
    
    .login-encabezado { text-align: center; margin-bottom: 28px; }
    .login-encabezado .marca-icono { font-size: 2rem; color: var(--salvia-oscuro); }
+   .marca { font-family: var(--fuente-titulo); color: var(--marron-oscuro); text-decoration: none;} 
+
    .login-encabezado h2 { font-size: 1.8rem; margin: 8px 0 4px; }
    .login-encabezado p { margin: 0 auto; font-size: 0.92rem; color: var(--marron-suave); }
    
@@ -274,7 +276,7 @@
 .enlace-volver-login { display: block; margin-top: 18px; text-align: center; font-size: 14px; color: #7a6a5c; text-decoration: none; }
 .enlace-volver-login:hover { text-decoration: underline; }
 
-.tabla-contenedor { overflow-x: auto; -webkit-overflow-scrolling: touch; }  /* la tabla se desliza dentro de su caja */
+.tabla-contenedor { overflow-x: auto; -webkit-overflow-scrolling: touch; } 
 .acciones-tabla { white-space: nowrap; }
 .aviso { max-width: 92vw; }
 .tarjeta-login { width: 100%; max-width: 420px; }
@@ -303,3 +305,33 @@
   .linea-venta-item .col-select { flex: 1 1 100%; min-width: 0; }
   .linea-venta-item .col-cant { flex: 1 1 90px; min-width: 0; }
 }
+
+.modal-admin { width: min(94vw, 460px) !important; max-height: 86vh !important; overflow-y: auto; padding: 16px !important; }
+.modal-admin h2 { font-size: 1.1rem; margin: 0 0 12px; padding-right: 36px; }
+.modal-admin .grupo-campo { margin-bottom: 10px; }
+.modal-admin label { font-size: 13px; margin-bottom: 3px; }
+.modal-admin input:not([type="checkbox"]):not([type="file"]),
+.modal-admin select,
+.modal-admin textarea { padding: 8px 10px; }
+.modal-admin .btn-ancho { min-height: 40px; }
+.modal-admin .grid-2-col { gap: 10px; }
+.modal-admin .linea-venta-item { gap: 6px; margin-bottom: 8px; }
+.modal-admin .miniatura-producto { width: 64px; height: 64px; }
+.modal-admin .preview-imagen-config { max-height: 110px; }
+ 
+.modal-admin .cerrar-modal {
+  position: sticky !important; top: 0; right: auto !important; left: auto !important;
+  display: flex; align-items: center; justify-content: center;
+  width: 34px; height: 34px; padding: 0; margin: 0 0 -34px auto;
+  border: none; border-radius: 50%; background: rgba(255, 255, 255, .95);
+  box-shadow: 0 1px 6px rgba(0, 0, 0, .25); font-size: 24px; line-height: 1; z-index: 5;
+}
+ 
+.contenedor-filtros-ventas { display: grid; gap: 8px; margin-bottom: 12px; }
+.contenedor-filtros-ventas .fila-filtros { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 0; }
+.contenedor-filtros-ventas .fila-filtros:last-child { grid-template-columns: 1fr; }
+.contenedor-filtros-ventas .grupo-campo { margin: 0; min-width: 0; }
+.contenedor-filtros-ventas label { display: block; font-size: 12px; margin: 0 0 2px; }
+.contenedor-filtros-ventas input,
+.contenedor-filtros-ventas select { width: 100%; min-width: 0; max-width: 100%; height: 38px; padding: 6px 8px; }
+ 

@@ -460,8 +460,16 @@ document.addEventListener('DOMContentLoaded', () => {
   document.querySelector('[data-orden-precio]')?.addEventListener('change', aplicarFiltrosCatalogo);
 
   const nav = document.querySelector('[data-nav]');
-  document.querySelector('[data-boton-menu]')?.addEventListener('click', () => nav?.classList.toggle('abierto'));
+  const botonMenu = document.querySelector('[data-boton-menu]');
+  const actualizarNav = () => {
+    const modoCelular = botonMenu && getComputedStyle(botonMenu).display !== 'none';
+    nav?.classList.toggle('nav-oculta', !!modoCelular && !nav.classList.contains('abierto'));
+  };
+  botonMenu?.addEventListener('click', () => nav?.classList.toggle('abierto'));
   document.querySelectorAll('.enlace-nav').forEach((enlace) => enlace.addEventListener('click', () => nav?.classList.remove('abierto')));
+  if (nav) new MutationObserver(actualizarNav).observe(nav, { attributes: true, attributeFilter: ['class'] });
+  window.addEventListener('resize', actualizarNav);
+  actualizarNav();
 
   document.addEventListener('keydown', (ev) => {
     if (ev.key === 'Escape') {
