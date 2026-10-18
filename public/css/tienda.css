@@ -458,3 +458,48 @@
 @media (max-width: 520px) {
   .selector-orden { flex: 1 1 100%; }
 }
+
+/* Tablet y celular grande: el inicio pasa a una sola columna */
+@media (max-width: 900px) {
+  .hero-contenido { display: grid !important; grid-template-columns: minmax(0, 1fr) !important; gap: 28px !important; text-align: center; }
+  .hero-acciones { justify-content: center; flex-wrap: wrap; }
+  .hero-ilustracion { max-width: 320px; margin: 0 auto; }
+  [data-hero-imagen] { width: min(100%, 320px); flex-basis: 320px; }
+  .contacto-grilla { grid-template-columns: minmax(0, 1fr) !important; }
+  .modal-contenido-grid { grid-template-columns: minmax(0, 1fr) !important; }
+}
+
+/* Productos: 3 por fila en tablet, 2 en celular, 1 en pantallas muy chicas */
+@media (min-width: 561px) and (max-width: 1024px) {
+  .grilla-productos { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; gap: 16px !important; }
+}
+@media (max-width: 560px) {
+  .grilla-productos { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 12px !important; }
+}
+@media (max-width: 340px) {
+  .grilla-productos { grid-template-columns: minmax(0, 1fr) !important; }
+}
+
+@media (max-width: 768px) {
+  .seccion { padding-top: 44px; padding-bottom: 44px; }
+  .seccion-encabezado h2 { font-size: 1.6rem; }
+  .hero-texto h1 { font-size: clamp(1.7rem, 7.5vw, 2.3rem); line-height: 1.2; }
+  .hero-texto .intro { font-size: 1rem; }
+
+  .encabezado .envoltorio { gap: 10px; flex-wrap: wrap; }
+  .tarjeta-contacto { min-width: 0 !important; }
+  .marca { font-size: 1.05rem; }
+
+  .tarjeta-producto { min-width: 0; }
+  .tarjeta-cuerpo { padding: 10px; }
+  .tarjeta-cuerpo h2, .tarjeta-cuerpo h3 { font-size: .95rem; }
+  .tarjeta-precio { font-size: 1rem; }
+  .tarjeta-pie { padding: 0 10px 10px; }
+  .tarjeta-pie .btn { font-size: .85rem; padding-left: 8px; padding-right: 8px; }
+
+  .modal-detalle { width: 94vw !important; max-width: 94vw !important; max-height: 90vh; overflow-y: auto; padding: 18px 16px; }
+  .panel-carrito { width: 100% !important; max-width: 100% !important; }
+
+  .pie .envoltorio { flex-direction: column; text-align: center; gap: 12px; }
+  .pie-enlaces { justify-content: center; flex-wrap: wrap; }
+}

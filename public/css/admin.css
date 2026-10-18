@@ -273,3 +273,33 @@
 
 .enlace-volver-login { display: block; margin-top: 18px; text-align: center; font-size: 14px; color: #7a6a5c; text-decoration: none; }
 .enlace-volver-login:hover { text-decoration: underline; }
+
+.tabla-contenedor { overflow-x: auto; -webkit-overflow-scrolling: touch; }  /* la tabla se desliza dentro de su caja */
+.acciones-tabla { white-space: nowrap; }
+.aviso { max-width: 92vw; }
+.tarjeta-login { width: 100%; max-width: 420px; }
+
+@media (max-width: 1000px) {
+  .dashboard-grid { grid-template-columns: minmax(0, 1fr) !important; }
+  .panel-columna { min-width: 0; }
+}
+
+@media (max-width: 768px) {
+  .encabezado-admin .envoltorio-admin { flex-wrap: wrap; gap: 10px; }
+  .admin-acciones-usuario { display: flex; flex-wrap: wrap; gap: 8px; width: 100%; }
+  .admin-acciones-usuario .btn { flex: 1 1 auto; }
+  .panel-encabezado-col { flex-wrap: wrap; gap: 10px; }
+
+  .fila-filtros { flex-wrap: wrap; gap: 10px; }
+  .fila-filtros .grupo-campo { flex: 1 1 140px; min-width: 0; }
+
+  .tabla-admin { min-width: 560px; font-size: 14px; }
+  .tabla-admin th, .tabla-admin td { padding: 8px 10px; }
+  .acciones-exportar .btn { width: 100%; }
+
+  .modal-admin { width: 94vw !important; max-width: 94vw !important; max-height: 90vh; padding: 20px 16px; }
+  .grid-2-col { grid-template-columns: minmax(0, 1fr) !important; }
+  .linea-venta-item { flex-wrap: wrap; gap: 8px; }
+  .linea-venta-item .col-select { flex: 1 1 100%; min-width: 0; }
+  .linea-venta-item .col-cant { flex: 1 1 90px; min-width: 0; }
+}
