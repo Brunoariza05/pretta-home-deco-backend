@@ -431,6 +431,10 @@ function obtenerVentasFiltradas() {
   return ventas;
 }
 
+function codigoVenta(v) {
+  return v.numero ? `V-${String(v.numero).padStart(4, '0')}` : `V-${String(v._id).slice(-4).toUpperCase()}`;
+}
+
 function renderizarVentas() {
   const tbody = document.getElementById('tablaVentasBody');
   const ventas = obtenerVentasFiltradas();
@@ -441,7 +445,7 @@ function renderizarVentas() {
   }
 
   tbody.innerHTML = ventas.map((v, i) => {
-    const cod = `V-${(i + 1).toString().padStart(4, '0')}`;
+    const cod = codigoVenta(v);
     const fecha = new Date(v.createdAt).toLocaleString('es-AR');
     const prods = (v.items || []).map((item) => `${item.nombre || 'Producto'} (x${item.cantidad})`).join('<br>');
 
@@ -683,7 +687,7 @@ function exportarPDFVentas() {
   let totalGeneral = 0;
 
   ventas.forEach((v, index) => {
-    const cod = `V-${(index + 1).toString().padStart(4, '0')}`;
+    const cod = codigoVenta(v);
     const fecha = new Date(v.createdAt).toLocaleString('es-AR');
     const prods = (v.items || []).map((i) => `${i.nombre || i.producto?.nombre || 'Producto'} (x${i.cantidad})`).join(', ');
     const monto = v.total || 0;
