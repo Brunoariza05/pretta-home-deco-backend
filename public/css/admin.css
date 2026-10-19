@@ -335,3 +335,4 @@
 .contenedor-filtros-ventas input,
 .contenedor-filtros-ventas select { width: 100%; min-width: 0; max-width: 100%; height: 38px; padding: 6px 8px; }
  
+.contenedor-filtros-ventas .fila-filtros { grid-template-columns: 1fr !important; gap: 8px; }

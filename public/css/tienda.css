@@ -527,3 +527,17 @@
   .modal-descripcion { font-size: .9rem; margin-bottom: 8px; }
 }
  
+.modal-col-imagen { background: transparent !important; }
+.modal-imagen-principal {
+  position: relative;
+  display: block !important;
+  width: fit-content; max-width: 100%;
+  max-height: none !important; padding: 0 !important; margin: 0 auto;
+  overflow: visible !important; background: transparent !important;
+  border-radius: 12px;
+}
+.modal-imagen-principal img {
+  display: block; width: auto !important; height: auto !important;
+  max-width: 100%; max-height: 38vh;
+  object-fit: contain; margin: 0 auto; border-radius: 12px;
+}
