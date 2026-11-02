@@ -1,5 +1,6 @@
 const ASUNTO = 'Tu código para cambiar la clave — Pretta Home Deco';
 
+// armamos el diseño y el texto del correo que se le va a enviar al usuario
 function armarMensaje(codigo) {
   const texto =
     `Tu código para cambiar la clave del panel de Pretta Home Deco es: ${codigo}\n\n` +
@@ -14,6 +15,7 @@ function armarMensaje(codigo) {
   return { texto, html };
 }
 
+// enviamos el correo utilizando el servicio de brevo
 async function enviarPorBrevo(destino, codigo) {
   const { texto, html } = armarMensaje(codigo);
   const res = await fetch('https://api.brevo.com/v3/smtp/email', {
@@ -30,6 +32,7 @@ async function enviarPorBrevo(destino, codigo) {
   if (!res.ok) throw new Error(`Brevo respondió ${res.status}: ${await res.text()}`);
 }
 
+// enviamos el correo utilizando una cuenta de gmail como respaldo
 async function enviarPorGmail(destino, codigo) {
   const nodemailer = require('nodemailer');
   const { texto, html } = armarMensaje(codigo);
@@ -46,6 +49,7 @@ async function enviarPorGmail(destino, codigo) {
   });
 }
 
+// elegimos qué servicio usar para mandar el mail según los datos que estén configurados en el .env
 exports.enviarCodigoRecuperacion = (destino, codigo) => {
   if (process.env.BREVO_API_KEY) return enviarPorBrevo(destino, codigo);
   if (process.env.MAIL_USER && process.env.MAIL_APP_PASSWORD) return enviarPorGmail(destino, codigo);

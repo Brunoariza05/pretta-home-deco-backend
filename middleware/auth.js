@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 
+// middleware que valida el token de seguridad (jwt) recibido en las cabeceras para permitir el acceso a rutas protegidas
 function verificarToken(req, res, next) {
   const authHeader = req.headers.authorization;
   if (!authHeader?.startsWith('Bearer ')) {

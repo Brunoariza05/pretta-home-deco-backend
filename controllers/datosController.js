@@ -1,6 +1,7 @@
 const Datos = require('../models/Datos');
 const { subirImagen, borrarImagen } = require('../config/cloudinary');
 
+// valores predeterminados para la página principal si todavía no hay nada guardado
 const VALORES_POR_DEFECTO = {
   titulo: 'Objetos con carácter para cada rincón de tu casa',
   subtitulo: 'Piezas simples y prolijas elegidas para durar y acompañar el día a día de tu hogar.',
@@ -12,12 +13,14 @@ const VALORES_POR_DEFECTO = {
   whatsappNumero: '5493516519583',
 };
 
+// busca el documento de configuración de la home o lo crea con los valores por defecto si no existe
 async function obtenerOCrearDatos() {
   let datos = await Datos.findOne();
   if (!datos) datos = await Datos.create(VALORES_POR_DEFECTO);
   return datos;
 }
 
+// devuelve los datos actuales de la página principal
 exports.obtener = async (req, res) => {
   try {
     const datos = await obtenerOCrearDatos();
@@ -28,6 +31,7 @@ exports.obtener = async (req, res) => {
   }
 };
 
+// actualiza la configuración de la home (textos, redes, mensajes y la imagen principal)
 exports.actualizar = async (req, res) => {
   let imagenNueva = null;
   try {

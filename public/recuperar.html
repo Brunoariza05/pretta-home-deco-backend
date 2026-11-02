@@ -16,6 +16,8 @@
         <h2>Pretta Home Deco</h2>
         <p>Cambiar clave</p>
       </div>
+      
+      <!-- paso 1: formulario para ingresar el correo electrónico -->
       <form id="formEmail">
         <p class="texto-ayuda-recuperar">Ingresá tu correo autorizado y te enviamos un código de 6 números.</p>
         <div class="grupo-campo">
@@ -24,6 +26,8 @@
         </div>
         <button type="submit" class="btn btn-salvia btn-ancho">Enviar código</button>
       </form>
+
+      <!-- paso 2: formulario para ingresar el código de verificación recibido -->
       <form id="formCodigo" hidden>
         <p class="texto-ayuda-recuperar">Te enviamos un código a <strong id="recEmailMostrado"></strong>. Vale 10 minutos.</p>
         <div class="grupo-campo">
@@ -33,6 +37,8 @@
         <button type="submit" class="btn btn-salvia btn-ancho">Verificar código</button>
         <button type="button" class="btn-texto-recuperar" id="btnReenviar" disabled>Reenviar código</button>
       </form>
+
+      <!-- paso 3: formulario para ingresar y repetir la nueva contraseña -->
       <form id="formNuevaClave" hidden>
         <p class="texto-ayuda-recuperar">Código correcto. Elegí tu clave nueva.</p>
         <div class="grupo-campo">
@@ -45,6 +51,8 @@
         </div>
         <button type="submit" class="btn btn-salvia btn-ancho">Guardar clave nueva</button>
       </form>
+
+      <!-- paso 4: mensaje de éxito al completar el cambio -->
       <div id="pasoExito" hidden>
         <p class="texto-ayuda-recuperar">✔ Tu clave se cambió correctamente.</p>
         <a href="admin.html" class="btn btn-salvia btn-ancho">Ir a ingresar</a>

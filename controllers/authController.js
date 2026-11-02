@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const Usuario = require('../models/Usuario');
 
+// valida el usuario y la contraseña para iniciar sesión y devuelve un token de acceso jwt
 exports.login = async (req, res) => {
   try {
     const { usuario, password } = req.body;
@@ -22,6 +23,7 @@ exports.login = async (req, res) => {
   }
 };
 
+// permite al administrador cambiar su contraseña actual por una nueva validando su clave previa
 exports.cambiarPassword = async (req, res) => {
   try {
     const { passwordActual, nuevaPassword } = req.body;

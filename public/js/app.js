@@ -1,6 +1,3 @@
-// ============================================================
-// CONFIGURACIÓN GENERAL
-// ============================================================
 const CONFIG = {
   API_URL: (['localhost', '127.0.0.1'].includes(location.hostname) ? 'http://localhost:3000' : '') + '/api',
   WHATSAPP_NUMERO: '5493516519583',
@@ -11,18 +8,14 @@ const CONFIG = {
 const CLAVE_CARRITO = 'pretta_carrito';
 let productosCargados = [];
 
-// ============================================================
-// CARGA RÁPIDA Y CONFIABLE (reintentos + copia guardada + fotos livianas)
-// ============================================================
 const CLAVE_CACHE_CATALOGO = 'pretta_cache_catalogo';
 const CLAVE_CACHE_DATOS = 'pretta_cache_datos';
 
-// Pide la foto a Cloudinary ya optimizada (formato moderno, calidad automática y ancho justo):
-// pesa varias veces menos y carga casi al instante. Si la URL no es de Cloudinary, no la toca.
+// optimiza la url de la imagen de cloudinary para acelerar la carga en la tienda
 function optimizarImagen(url, ancho = 800) {
   if (typeof url !== 'string' || !url.includes('res.cloudinary.com') || !url.includes('/upload/')) return url;
   const despues = url.split('/upload/')[1] || '';
-  if (/^[a-z]{1,3}_/.test(despues)) return url; // ya viene con transformaciones
+  if (/^[a-z]{1,3}_/.test(despues)) return url; 
   return url.replace('/upload/', `/upload/f_auto,q_auto,w_${ancho}/`);
 }
 
@@ -30,11 +23,10 @@ function leerCache(clave) {
   try { return JSON.parse(localStorage.getItem(clave)); } catch { return null; }
 }
 function guardarCache(clave, datos) {
-  try { localStorage.setItem(clave, JSON.stringify(datos)); } catch { /* sin espacio: no pasa nada */ }
+  try { localStorage.setItem(clave, JSON.stringify(datos)); } catch {  }
 }
 
-// GET a la API con límite de tiempo y hasta 3 intentos (si el servidor recién se está "despertando",
-// el 2º o 3º intento ya lo encuentra listo y la persona nunca ve el error).
+// realiza una petición http para obtener datos en formato json con reintentos automáticos
 async function pedirJSON(ruta, intentos = 3) {
   let ultimoError;
   for (let i = 1; i <= intentos; i++) {
@@ -54,9 +46,7 @@ async function pedirJSON(ruta, intentos = 3) {
   throw ultimoError;
 }
 
-// ============================================================
-// CARRITO Y STORAGE
-// ============================================================
+// obtiene los productos guardados en el carrito desde el almacenamiento local
 function obtenerCarrito() {
   try {
     const datos = JSON.parse(localStorage.getItem(CLAVE_CARRITO));
@@ -66,12 +56,14 @@ function obtenerCarrito() {
   }
 }
 
+// guarda los ítems del carrito en el almacenamiento local y actualiza la vista
 function guardarCarrito(items) {
   localStorage.setItem(CLAVE_CARRITO, JSON.stringify(items));
   actualizarContador();
   renderizarCarrito();
 }
 
+// agrega un producto al carrito de compras validando el stock disponible
 function agregarAlCarrito(producto, cantidad = 1) {
   if (!producto || (producto.stock !== undefined && producto.stock <= 0)) {
     mostrarAviso('Producto sin stock disponible');
@@ -111,6 +103,7 @@ function agregarAlCarrito(producto, cantidad = 1) {
   mostrarAviso(`${producto.nombre} agregado al carrito`);
 }
 
+// modifica la cantidad de un producto específico dentro del carrito
 function cambiarCantidadItem(id, cantidad) {
   const items = obtenerCarrito();
   const item = items.find((i) => i.id === id);
@@ -120,26 +113,28 @@ function cambiarCantidadItem(id, cantidad) {
   guardarCarrito(items);
 }
 
+// elimina un producto del carrito de compras
 function quitarDelCarrito(id) {
   guardarCarrito(obtenerCarrito().filter((i) => i.id !== id));
 }
 
+// vacía por completo el carrito de compras
 function vaciarCarrito() {
   guardarCarrito([]);
   mostrarAviso('Carrito vaciado');
 }
 
+// calcula el precio total de todos los productos en el carrito
 function calcularTotal(items) {
   return items.reduce((suma, i) => suma + i.precio * i.cantidad, 0);
 }
 
+// formatea un número como moneda en pesos argentinos
 function formatearPrecio(numero) {
   return (numero || 0).toLocaleString('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 });
 }
 
-// ============================================================
-// INTERFAZ DEL CARRITO
-// ============================================================
+// actualiza el contador numérico de productos en el icono del carrito
 function actualizarContador() {
   const total = obtenerCarrito().reduce((suma, i) => suma + i.cantidad, 0);
   document.querySelectorAll('[data-contador-carrito]').forEach((el) => {
@@ -148,6 +143,7 @@ function actualizarContador() {
   });
 }
 
+// dibuja los elementos del carrito en el panel lateral desplegable
 function renderizarCarrito() {
   const contenedor = document.querySelector('[data-carrito-items]');
   if (!contenedor) return;
@@ -195,18 +191,21 @@ function renderizarCarrito() {
   if (btnConfirmar) btnConfirmar.disabled = items.length === 0;
 }
 
+// abre el panel lateral del carrito de compras
 function abrirCarrito() {
   document.querySelector('[data-panel-carrito]')?.classList.add('visible');
   document.querySelector('[data-fondo-carrito]')?.classList.add('visible');
   document.body.style.overflow = 'hidden';
 }
 
+// cierra el panel lateral del carrito de compras
 function cerrarCarrito() {
   document.querySelector('[data-panel-carrito]')?.classList.remove('visible');
   document.querySelector('[data-fondo-carrito]')?.classList.remove('visible');
   document.body.style.overflow = '';
 }
 
+// muestra un aviso flotante en la tienda pública
 function mostrarAviso(texto) {
   const aviso = document.querySelector('[data-aviso]');
   if (!aviso) return;
@@ -216,6 +215,7 @@ function mostrarAviso(texto) {
   mostrarAviso._temporizador = setTimeout(() => aviso.classList.remove('visible'), 2600);
 }
 
+// genera el mensaje de pedido y abre whatsapp para finalizar la compra
 function finalizarCompraWhatsApp() {
   const items = obtenerCarrito();
   if (items.length === 0) {
@@ -240,9 +240,7 @@ function finalizarCompraWhatsApp() {
   window.open(url, '_blank', 'noopener');
 }
 
-// ============================================================
-// CATÁLOGO Y MODAL DE PRODUCTO
-// ============================================================
+// genera el código HTML para la tarjeta visual de un producto en la tienda
 function tarjetaProductoHtml(producto) {
   const sinStock = producto.stock <= 0;
   const imagenPrincipal = (producto.imagenes && producto.imagenes.length > 0) 
@@ -274,13 +272,11 @@ function tarjetaProductoHtml(producto) {
   `;
 }
 
-// Convierte lo que devuelve la API en la lista que usa la tienda (foto principal primero y fotos optimizadas)
+// procesa la lista de productos ordenando las imágenes para mostrar la principal primero
 function armarProductos(datos) {
   return datos.map((p) => {
     let listaImg = [];
     if (p.imagenes && p.imagenes.length > 0) {
-      // La foto marcada como principal va primera: es la de la tarjeta y la que abre el detalle.
-      // (sort es estable: el resto conserva su orden)
       const ordenadas = [...p.imagenes].sort((x, y) => (y.principal ? 1 : 0) - (x.principal ? 1 : 0));
       listaImg = ordenadas.map((i) => optimizarImagen(typeof i === 'string' ? i : i.url));
     } else if (p.imagenUrl) {
@@ -292,18 +288,17 @@ function armarProductos(datos) {
   });
 }
 
+// carga el catálogo de productos desde la caché local o consultando al servidor
 async function cargarCatalogo() {
   const grilla = document.querySelector('[data-grilla-productos]');
   if (!grilla) return;
 
-  // 1) Si el catálogo ya se vio antes en este dispositivo, se muestra AL INSTANTE (aunque el servidor tarde)
   const guardado = leerCache(CLAVE_CACHE_CATALOGO);
   if (Array.isArray(guardado) && guardado.length > 0) {
     productosCargados = armarProductos(guardado);
     aplicarFiltrosCatalogo();
   }
 
-  // 2) Se pide la versión actualizada (con reintentos) y se reemplaza
   try {
     const datos = await pedirJSON('/productos');
     guardarCache(CLAVE_CACHE_CATALOGO, datos);
@@ -311,7 +306,6 @@ async function cargarCatalogo() {
     aplicarFiltrosCatalogo();
   } catch (err) {
     console.error('Error al cargar el catálogo:', err);
-    // Solo se muestra el error si no hay NADA para mostrar
     if (productosCargados.length === 0) {
       grilla.innerHTML = `
         <div class="mensaje-vacio">
@@ -326,20 +320,20 @@ async function cargarCatalogo() {
   }
 }
 
-// ORDEN: muestra el catálogo según lo escrito en el buscador y el orden elegido (menor / mayor precio).
-// Sin orden elegido, queda el orden original del servidor (los más nuevos primero).
+// filtra y ordena los productos del catálogo según el buscador y el criterio de precio
 function aplicarFiltrosCatalogo() {
   const texto = (document.querySelector('[data-buscador]')?.value || '').trim().toLowerCase();
   const orden = document.querySelector('[data-orden-precio]')?.value || '';
 
   const lista = texto
     ? productosCargados.filter((p) => p.nombre.toLowerCase().includes(texto))
-    : [...productosCargados]; // copia: ordenar no toca el original
+    : [...productosCargados]; 
   if (orden === 'menor') lista.sort((a, b) => a.precio - b.precio);
   if (orden === 'mayor') lista.sort((a, b) => b.precio - a.precio);
   renderizarGrilla(lista);
 }
 
+// dibuja la grilla de productos en la página principal
 function renderizarGrilla(productos) {
   const grilla = document.querySelector('[data-grilla-productos]');
   if (!grilla) return;
@@ -351,6 +345,7 @@ function renderizarGrilla(productos) {
   grilla.innerHTML = productos.map(tarjetaProductoHtml).join('');
 }
 
+// abre el modal con el detalle completo de un producto seleccionado
 function abrirModalProducto(producto) {
   const modal = document.querySelector('[data-modal-detalle]');
   const fondo = document.querySelector('[data-fondo-modal]');
@@ -412,17 +407,14 @@ function abrirModalProducto(producto) {
   document.body.style.overflow = 'hidden';
 }
 
+// cierra el modal de detalle del producto
 function cerrarModalProducto() {
   document.querySelector('[data-modal-detalle]')?.classList.remove('visible');
   document.querySelector('[data-fondo-modal]')?.classList.remove('visible');
   document.body.style.overflow = '';
 }
 
-// ============================================================
-// PÁGINA PRINCIPAL (tabla "datos": título, subtítulo, imagen del hero y mensajes)
-// ============================================================
-// Trae /api/datos, actualiza CONFIG (WhatsApp/redes) y pinta el hero. Si falla,
-// la página se queda con el contenido fijo que ya está en el HTML.
+// carga los datos de configuración del sitio (títulos, mensajes, redes) desde la caché o el servidor
 async function cargarDatosSitio() {
   const aplicar = (datos) => {
     if (datos.whatsappNumero) CONFIG.WHATSAPP_NUMERO = datos.whatsappNumero;
@@ -431,7 +423,6 @@ async function cargarDatosSitio() {
     pintarHero(datos);
   };
 
-  // Se pinta primero lo último que se vio (instantáneo) y después se actualiza con lo del servidor
   const guardado = leerCache(CLAVE_CACHE_DATOS);
   if (guardado) aplicar(guardado);
 
@@ -446,6 +437,7 @@ async function cargarDatosSitio() {
   }
 }
 
+// actualiza la sección principal (hero) de la página con los textos e imágenes configurados
 function pintarHero(datos) {
   if (datos.titulo) {
     const h1 = document.querySelector('[data-hero-titulo]');
@@ -457,8 +449,6 @@ function pintarHero(datos) {
     if (p) p.textContent = datos.subtitulo;
   }
 
-  // Si la dueña cargó una imagen desde el panel, reemplaza al dibujo SVG de muestra.
-  // Si la imagen no carga, se vuelve a mostrar el dibujo.
   if (datos.imagen && datos.imagen.url) {
     const img = document.querySelector('[data-hero-imagen]');
     const svg = document.querySelector('[data-hero-ilustracion-svg]');
@@ -476,8 +466,6 @@ function pintarHero(datos) {
     if (svg) svg.style.display = 'none';
   }
 
-  // Los mensajes de la franja de valores: no hay cantidad fija, así que se arma el HTML
-  // entero de nuevo (no solo se completan los 3 que ya estaban).
   if (Array.isArray(datos.mensajes) && datos.mensajes.length > 0) {
     const franja = document.querySelector('[data-franja-valores]');
     if (franja) {
@@ -494,12 +482,9 @@ function pintarHero(datos) {
   }
 }
 
-// ============================================================
-// INICIALIZACIÓN
-// ============================================================
+// inicializa los eventos y componentes al cargar la página principal de la tienda
 document.addEventListener('DOMContentLoaded', () => {
   cargarDatosSitio().then(() => {
-    // El link de WhatsApp/redes se arma recién acá, ya con el número actualizado
     const linkWa = `https://wa.me/${CONFIG.WHATSAPP_NUMERO}?text=${encodeURIComponent('Hola! Quisiera realizar una consulta sobre Pretta Home Deco.')}`;
     const btnWa = document.querySelector('[data-whatsapp-contacto]');
     if (btnWa) btnWa.href = linkWa;
@@ -559,7 +544,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const nav = document.querySelector('[data-nav]');
   const botonMenu = document.querySelector('[data-boton-menu]');
-  // En celular, el menú cerrado se esconde de verdad (si no, se asoma al "rebotar" arriba de todo)
   const actualizarNav = () => {
     const modoCelular = botonMenu && getComputedStyle(botonMenu).display !== 'none';
     nav?.classList.toggle('nav-oculta', !!modoCelular && !nav.classList.contains('abierto'));

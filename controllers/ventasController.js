@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const Venta = require('../models/Venta');
 const Producto = require('../models/Producto');
 
+// función auxiliar para procesar cada producto de una venta (valida stock y calcula subtotales)
 async function procesarItem(item, { descontarStock }) {
   const idProd = item.productoId || item.producto;
   const cant = parseInt(item.cantidad) || 0;
@@ -36,6 +37,7 @@ async function procesarItem(item, { descontarStock }) {
   return { producto: idProd, nombre, precioUnitario: precioEfectivo, cantidad: cant, subtotal };
 }
 
+// devuelve el historial completo de ventas ordenadas de más nueva a más antigua
 exports.listar = async (req, res) => {
   try {
     const ventas = await Venta.find().sort({ createdAt: -1 });
@@ -46,6 +48,7 @@ exports.listar = async (req, res) => {
   }
 };
 
+// registra una nueva venta descontando el stock correspondiente de los productos
 exports.crear = async (req, res) => {
   try {
     const { items } = req.body;
@@ -75,6 +78,7 @@ exports.crear = async (req, res) => {
   }
 };
 
+// edita una venta existente, revierte el stock anterior, aplica los cambios y recalcula el inventario
 exports.editar = async (req, res) => {
   try {
     if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
@@ -120,6 +124,7 @@ exports.editar = async (req, res) => {
   }
 };
 
+// elimina un registro de venta del sistema
 exports.eliminar = async (req, res) => {
   try {
     if (!mongoose.Types.ObjectId.isValid(req.params.id)) {

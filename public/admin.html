@@ -7,12 +7,13 @@
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/admin.css">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <!-- librerías externas para exportar tablas a pdf -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
 </head>
 <body class="body-admin">
 
-  <!-- Login -->
+  <!-- sección de inicio de sesión del panel de administración -->
   <div id="seccionLogin" class="contenedor-login">
     <div class="tarjeta-login">
       <div class="login-encabezado">
@@ -34,7 +35,7 @@
     </div>
   </div>
 
-  <!-- Dashboard Principal -->
+  <!-- panel principal de administración (dashboard) oculto por defecto -->
   <div id="seccionDashboard" class="contenedor-dashboard" style="display: none;">
     <header class="encabezado-admin">
       <div class="envoltorio-admin">
@@ -52,7 +53,7 @@
 
     <main class="envoltorio-admin">
 
-      <!-- ================= RESUMEN (pantalla principal) ================= -->
+      <!-- vista de resumen y estadísticas generales -->
       <section class="vista-admin" data-vista="resumen">
         <div class="resumen-encabezado">
           <h2>Resumen</h2>
@@ -87,7 +88,7 @@
         </div>
       </section>
 
-      <!-- ================= PRODUCTOS ================= -->
+      <!-- vista del listado de productos -->
       <section class="vista-admin panel-columna" data-vista="productos" hidden>
         <div class="panel-encabezado-col">
           <h2>Listado de Productos</h2>
@@ -103,7 +104,7 @@
         </div>
       </section>
 
-      <!-- ================= VENTAS ================= -->
+      <!-- vista del listado y filtros de ventas -->
       <section class="vista-admin panel-columna" data-vista="ventas" hidden>
         <div class="panel-encabezado-col">
           <h2>Listado de Ventas</h2>
@@ -152,7 +153,8 @@
           <button type="button" id="btnGenerarPDF" class="btn btn-secundario">📄 Exportar PDF Filtrado</button>
         </div>
       </section>
-      <!-- ================= AJUSTES / OTRAS GESTIONES ================= -->
+
+      <!-- vista de ajustes generales y configuración -->
       <section class="vista-admin" data-vista="ajustes" hidden>
         <div class="resumen-encabezado"><h2>Otras gestiones</h2></div>
         <div class="lista-gestiones">
@@ -173,7 +175,7 @@
     </main>
   </div>
 
-  <!-- Modales -->
+  <!-- ventana modal para crear o editar productos -->
   <div class="fondo-modal" id="fondoModalProducto"></div>
   <div class="modal-detalle modal-admin" id="modalProducto" role="dialog">
     <button class="cerrar-modal" id="btnCerrarModalProducto">&times;</button>
@@ -213,6 +215,7 @@
     </form>
   </div>
 
+  <!-- ventana modal para registrar o editar ventas -->
   <div class="fondo-modal" id="fondoModalVenta"></div>
   <div class="modal-detalle modal-admin" id="modalVenta" role="dialog">
     <button class="cerrar-modal" id="btnCerrarModalVenta">&times;</button>
@@ -230,6 +233,7 @@
     </form>
   </div>
 
+  <!-- ventana modal para cambiar la contraseña -->
   <div class="fondo-modal" id="fondoModalPass"></div>
   <div class="modal-detalle modal-admin" id="modalPass" role="dialog">
     <button class="cerrar-modal" id="btnCerrarModalPass">&times;</button>
@@ -248,7 +252,7 @@
     </form>
   </div>
 
-  <!-- Modal: Editar Página Principal (tabla "datos") -->
+  <!-- ventana modal para editar la configuración de la home -->
   <div class="fondo-modal" id="fondoModalConfig"></div>
   <div class="modal-detalle modal-admin" id="modalConfig" role="dialog">
     <button class="cerrar-modal" id="btnCerrarModalConfig">&times;</button>
@@ -295,6 +299,7 @@
     </form>
   </div>
 
+  <!-- cartel flotante de avisos del sistema -->
   <div class="aviso" data-aviso>
     <span class="punto-salvia"></span>
     <span>Mensaje del sistema</span>

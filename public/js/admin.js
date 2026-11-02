@@ -1,31 +1,26 @@
-// ============================================================
-// CONFIGURACIÓN Y ESTADO GENERAL
-// ============================================================
 const CONFIG = { API_URL: (['localhost', '127.0.0.1'].includes(location.hostname) ? 'http://localhost:3000' : '') + '/api' };
-const UMBRAL_STOCK_BAJO = 5; // de 1 a 5 unidades se considera "por agotarse"
+const UMBRAL_STOCK_BAJO = 5; 
 
 let token = localStorage.getItem('pretta_token') || null;
 let productosCache = [];
 let ventasCache = [];
 let idVentaEditando = null;
 let datosCache = null;
-let productoEditandoId = null; // producto abierto en el modal (null = producto nuevo)
+let productoEditandoId = null; 
 const MAX_IMAGENES_PRODUCTO = 5;
 
-// ============================================================
-// AYUDANTES: modales, fetch autenticado y avisos
-// ============================================================
+// muestra u oculta una ventana emergente (modal) alternando clases de visibilidad
 function toggleModal(idModal, idFondo, mostrar) {
   document.getElementById(idModal)?.classList.toggle('visible', mostrar);
   document.getElementById(idFondo)?.classList.toggle('visible', mostrar);
 }
 
+// arma la cabecera de autenticación HTTP usando el token guardado
 function authHeaders() {
   return { Authorization: `Bearer ${token}` };
 }
 
-// fetch con el token puesto, que maneja sesión vencida y errores de la API en un solo lugar.
-// Ante un 401 cierra la sesión y tira un error especial '401' para no mostrar doble aviso.
+// realiza peticiones http protegidas enviando el token y manejando el vencimiento de sesión (401)
 async function fetchProtegido(url, opciones = {}) {
   const res = await fetch(url, { ...opciones, headers: { ...authHeaders(), ...(opciones.headers || {}) } });
 
@@ -40,7 +35,7 @@ async function fetchProtegido(url, opciones = {}) {
   return data;
 }
 
-// tipo: 'ok' (por defecto) o 'error' (cartelito rojo, dura un poco más para poder leerlo)
+// muestra un cartel flotante de aviso en la pantalla con un texto y tipo específico
 function mostrarAviso(texto, tipo = 'ok') {
   const aviso = document.querySelector('[data-aviso]');
   if (!aviso) return;
@@ -51,14 +46,12 @@ function mostrarAviso(texto, tipo = 'ok') {
   mostrarAviso._temporizador = setTimeout(() => aviso.classList.remove('visible'), tipo === 'error' ? 4200 : 2600);
 }
 
-// Reporta un error de fetchProtegido, salvo que ya se haya avisado como sesión vencida (401)
+// muestra un aviso de error en pantalla si el código de estado no es 401
 function avisarError(err) {
   if (err.message !== '401') mostrarAviso(err.message, 'error');
 }
 
-// ============================================================
-// INICIALIZACIÓN
-// ============================================================
+// inicializa los eventos de la interfaz del panel de administración al cargar el documento
 document.addEventListener('DOMContentLoaded', () => {
   token ? mostrarDashboard() : mostrarLogin();
 
@@ -82,7 +75,6 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('fondoModalConfig')?.addEventListener('click', cerrarModalConfig);
   document.getElementById('cfgImagen')?.addEventListener('change', previsualizarImagenConfig);
 
-  // Fotos del producto: validar cantidad al elegir archivos, y check / tachito de cada miniatura
   document.getElementById('prodImagenes')?.addEventListener('change', validarCantidadImagenes);
   const contMiniaturas = document.getElementById('prodImagenesExistentes');
   contMiniaturas?.addEventListener('change', (ev) => {
@@ -127,9 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-// ============================================================
-// AUTENTICACIÓN
-// ============================================================
+// procesa las credenciales de inicio de sesión y guarda el token si son correctas
 async function manejarLogin(ev) {
   ev.preventDefault();
   if (!validarFormulario(ev.target)) return;
@@ -154,17 +144,20 @@ async function manejarLogin(ev) {
   }
 }
 
+// cierra la sesión actual borrando el token y mostrando el formulario de login
 function cerrarSesion() {
   token = null;
   localStorage.removeItem('pretta_token');
   mostrarLogin();
 }
 
+// oculta el panel y muestra la pantalla de inicio de sesión
 function mostrarLogin() {
   document.getElementById('seccionLogin').style.display = 'flex';
   document.getElementById('seccionDashboard').style.display = 'none';
 }
 
+// oculta el login y muestra el panel principal de administración cargando los datos
 function mostrarDashboard() {
   document.getElementById('seccionLogin').style.display = 'none';
   document.getElementById('seccionDashboard').style.display = 'block';
@@ -174,9 +167,7 @@ function mostrarDashboard() {
   cargarConfiguracionAdmin();
 }
 
-// ============================================================
-// PRODUCTOS
-// ============================================================
+// trae la lista completa de productos desde el servidor para gestionarlos en el panel
 async function cargarProductosAdmin() {
   try {
     productosCache = await fetchProtegido(`${CONFIG.API_URL}/productos/admin/todos`);
@@ -190,6 +181,7 @@ async function cargarProductosAdmin() {
   }
 }
 
+// dibuja la tabla de productos en el panel con sus respectivos estados y botones de acción
 function renderizarProductos() {
   const tbody = document.getElementById('tablaProductosBody');
   if (productosCache.length === 0) {
@@ -229,6 +221,7 @@ function renderizarProductos() {
   }).join('');
 }
 
+// cambia la visibilidad pública de un producto (activo / oculto en la tienda)
 async function toggleVisibilidad(id, activar) {
   try {
     await fetchProtegido(`${CONFIG.API_URL}/productos/${id}`, {
@@ -243,7 +236,7 @@ async function toggleVisibilidad(id, activar) {
   }
 }
 
-// Devuelve la foto que se ve primero en la tienda: la marcada como principal, o la primera.
+// devuelve la url de la imagen principal del producto o la primera disponible
 function urlImagenPrincipal(p) {
   const imgs = p.imagenes || [];
   const img = imgs.find((i) => typeof i !== 'string' && i.principal) || imgs[0];
@@ -251,6 +244,7 @@ function urlImagenPrincipal(p) {
   return p.imagenUrl || 'placeholder.svg';
 }
 
+// abre el modal para crear o editar un producto cargando sus datos si corresponde
 function abrirModalProducto(prod = null) {
   document.getElementById('formProducto').reset();
   document.getElementById('prodId').value = '';
@@ -273,6 +267,7 @@ function abrirModalProducto(prod = null) {
   toggleModal('modalProducto', 'fondoModalProducto', true);
 }
 
+// cierra el modal de productos y limpia las variables auxiliares
 function cerrarModalProducto() {
   toggleModal('modalProducto', 'fondoModalProducto', false);
   productoEditandoId = null;
@@ -280,13 +275,13 @@ function cerrarModalProducto() {
   renderizarMiniaturasProducto();
 }
 
-// ---- Fotos del producto: miniaturas con check (principal) y tachito (borrar) ----
-let urlsPendientes = []; // vistas previas de archivos recién elegidos (hay que liberarlas)
+let urlsPendientes = []; 
 
 function productoEnModal() {
   return productosCache.find((p) => p._id === productoEditandoId) || null;
 }
 
+// dibuja las miniaturas de las fotos actuales y nuevas de un producto en el modal
 function renderizarMiniaturasProducto() {
   const cont = document.getElementById('prodImagenesExistentes');
   if (!cont) return;
@@ -334,8 +329,7 @@ function renderizarMiniaturasProducto() {
   `;
 }
 
-// Devuelve true si las fotos guardadas + las recién elegidas no pasan el máximo.
-// Si se pasan: cartelito de error y se vacía la selección (las guardadas no se tocan).
+// valida que la cantidad de imágenes seleccionadas no supere el límite permitido por producto
 function validarCantidadImagenes() {
   const input = document.getElementById('prodImagenes');
   const guardadas = productoEnModal()?.imagenes?.length || 0;
@@ -356,7 +350,7 @@ function validarCantidadImagenes() {
   return ok;
 }
 
-// Cuando el servidor devuelve el producto actualizado, se reemplaza en el cache y se repinta la tabla
+// actualiza un producto en el listado guardado en memoria (caché local del panel)
 function reemplazarProductoEnCache(actualizado) {
   const i = productosCache.findIndex((p) => p._id === actualizado._id);
   if (i >= 0) productosCache[i] = actualizado;
@@ -364,6 +358,7 @@ function reemplazarProductoEnCache(actualizado) {
   renderizarResumen();
 }
 
+// marca una de las fotos de un producto como la principal
 async function marcarImagenPrincipal(imagenId) {
   try {
     const actualizado = await fetchProtegido(
@@ -378,6 +373,7 @@ async function marcarImagenPrincipal(imagenId) {
   renderizarMiniaturasProducto();
 }
 
+// borra una foto específica de un producto tras confirmar la acción
 async function borrarImagenProducto(imagenId) {
   if (!confirm('¿Borrar esta foto? Se elimina definitivamente.')) return;
   try {
@@ -393,11 +389,13 @@ async function borrarImagenProducto(imagenId) {
   renderizarMiniaturasProducto();
 }
 
+// busca un producto por su id y abre el modal para editarlo
 function prepararEditarProducto(id) {
   const p = productosCache.find((item) => item._id === id);
   if (p) abrirModalProducto(p);
 }
 
+// guarda un producto nuevo o editado enviando los datos y archivos mediante form data
 async function guardarProducto(ev) {
   ev.preventDefault();
   if (!validarFormulario(ev.target)) return;
@@ -415,7 +413,6 @@ async function guardarProducto(ev) {
   const url = id ? `${CONFIG.API_URL}/productos/${id}` : `${CONFIG.API_URL}/productos`;
 
   try {
-    // Sin 'Content-Type': con FormData lo pone el navegador solo (necesita el boundary)
     await fetchProtegido(url, { method: id ? 'PUT' : 'POST', body: formData });
     mostrarAviso(id ? 'Producto actualizado' : 'Producto registrado');
     cerrarModalProducto();
@@ -425,6 +422,7 @@ async function guardarProducto(ev) {
   }
 }
 
+// elimina un producto de la base de datos de forma permanente
 async function eliminarProducto(id) {
   if (!confirm('¿Estás segura de que querés eliminar permanentemente este producto de la base de datos?')) return;
   try {
@@ -436,9 +434,7 @@ async function eliminarProducto(id) {
   }
 }
 
-// ============================================================
-// VENTAS (SNAPSHOT PATTERN Y FILTROS)
-// ============================================================
+// carga el listado de ventas registradas desde el servidor
 async function cargarVentasAdmin() {
   try {
     ventasCache = await fetchProtegido(`${CONFIG.API_URL}/ventas`);
@@ -452,15 +448,14 @@ async function cargarVentasAdmin() {
   }
 }
 
-// Un solo select ("Filtro por fecha y precio") con 4 opciones excluyentes entre sí,
-// en vez de dos selects separados (uno para fecha, otro para precio).
 const COMPARADORES_ORDEN_VENTA = {
-  fecha_desc: (a, b) => new Date(b.createdAt) - new Date(a.createdAt), // más reciente primero
-  fecha_asc: (a, b) => new Date(a.createdAt) - new Date(b.createdAt), // más antigua primero
-  total_desc: (a, b) => b.total - a.total, // mayor a menor precio
-  total_asc: (a, b) => a.total - b.total, // menor a mayor precio
+  fecha_desc: (a, b) => new Date(b.createdAt) - new Date(a.createdAt), 
+  fecha_asc: (a, b) => new Date(a.createdAt) - new Date(b.createdAt), 
+  total_desc: (a, b) => b.total - a.total, 
+  total_asc: (a, b) => a.total - b.total, 
 };
 
+// filtra y ordena las ventas según los criterios de fecha y orden elegidos
 function obtenerVentasFiltradas() {
   let ventas = [...ventasCache];
 
@@ -471,12 +466,12 @@ function obtenerVentasFiltradas() {
   if (fDesde) ventas = ventas.filter((v) => new Date(v.createdAt) >= new Date(`${fDesde}T00:00:00`));
   if (fHasta) ventas = ventas.filter((v) => new Date(v.createdAt) <= new Date(`${fHasta}T23:59:59.999`));
 
-  // Sin nada elegido, se ordena por fecha más reciente primero (comportamiento por defecto)
   ventas.sort(COMPARADORES_ORDEN_VENTA[orden] || COMPARADORES_ORDEN_VENTA.fecha_desc);
 
   return ventas;
 }
 
+// dibuja la tabla de ventas en el panel con los filtros aplicados
 function renderizarVentas() {
   const tbody = document.getElementById('tablaVentasBody');
   const ventas = obtenerVentasFiltradas();
@@ -509,6 +504,7 @@ function renderizarVentas() {
   }).join('');
 }
 
+// elimina un registro de venta tras confirmar la acción
 async function eliminarVenta(id) {
   if (!confirm('¿Estás segura de que querés eliminar esta venta?')) return;
   try {
@@ -520,6 +516,7 @@ async function eliminarVenta(id) {
   }
 }
 
+// abre el modal para registrar una nueva venta
 function abrirModalVenta() {
   idVentaEditando = null;
   const titulo = document.getElementById('tituloModalVenta') || document.getElementById('modalVentaTitulo');
@@ -530,6 +527,7 @@ function abrirModalVenta() {
   toggleModal('modalVenta', 'fondoModalVenta', true);
 }
 
+// abre el modal para editar una venta existente cargando sus líneas de productos
 function abrirModalEditarVenta(id) {
   const venta = ventasCache.find((v) => v._id === id);
   if (!venta) return;
@@ -544,8 +542,6 @@ function abrirModalEditarVenta(id) {
   (venta.items || []).forEach((item) => {
     const prodId = item.producto?._id || item.producto;
     const precioGuardado = item.precioUnitario !== undefined ? item.precioUnitario : (item.precio || 0);
-    // Se pasa también el nombre histórico: si el producto ya fue eliminado, es la única
-    // forma de mostrar y conservar esa línea (ver agregarLineaVentaConValores).
     agregarLineaVentaConValores(prodId, item.cantidad, precioGuardado, item.nombre);
   });
 
@@ -553,18 +549,17 @@ function abrirModalEditarVenta(id) {
   recalcularTotalVentaModal();
 }
 
+// cierra el modal de ventas
 function cerrarModalVenta() {
   toggleModal('modalVenta', 'fondoModalVenta', false);
 }
 
+// agrega una línea vacía para un producto en el formulario de venta
 function agregarLineaVenta() {
   agregarLineaVentaConValores('', 1, null);
 }
 
-// Arma una línea del formulario de venta.
-// Si idSeleccionado corresponde a un producto que ya NO existe en productosCache (fue
-// eliminado), la línea se muestra de solo lectura con su nombre/precio históricos: se puede
-// cambiar la cantidad o quitarla, pero no reasignarle otro producto (ese dato ya no existe).
+// agrega una línea de venta con valores predefinidos (útil al editar ventas existentes)
 function agregarLineaVentaConValores(idSeleccionado = '', cantidad = 1, precioHistorico = null, nombreHistorico = null) {
   const cont = document.getElementById('lineasVentaContenedor');
   const productoExiste = !idSeleccionado || productosCache.some((p) => p._id === idSeleccionado);
@@ -635,6 +630,7 @@ function agregarLineaVentaConValores(idSeleccionado = '', cantidad = 1, precioHi
   recalcularTotalVentaModal();
 }
 
+// recalcula el monto total de la venta sumando los subtotales de cada línea del modal
 function recalcularTotalVentaModal() {
   let total = 0;
   document.querySelectorAll('.linea-venta-item').forEach((linea) => {
@@ -647,9 +643,7 @@ function recalcularTotalVentaModal() {
   document.getElementById('totalVentaModal').textContent = `$${total.toLocaleString('es-AR')}`;
 }
 
-// Lee las líneas del formulario y arma el array "items" que espera el backend.
-// Se manda también "nombre": es lo que permite conservar el dato histórico si el
-// producto de la línea ya fue eliminado (ver routes/ventas.js → procesarItem).
+// lee los ítems seleccionados en el formulario de venta para enviarlos al servidor
 function leerItemsFormularioVenta() {
   const items = [];
   document.querySelectorAll('.linea-venta-item').forEach((linea) => {
@@ -664,6 +658,7 @@ function leerItemsFormularioVenta() {
   return items;
 }
 
+// guarda una venta nueva o editada enviando los datos a la api
 async function guardarVenta(ev) {
   ev.preventDefault();
   const items = leerItemsFormularioVenta();
@@ -690,18 +685,18 @@ async function guardarVenta(ev) {
   }
 }
 
-// ============================================================
-// CAMBIAR CONTRASEÑA
-// ============================================================
+// abre el modal para cambiar la contraseña del administrador
 function abrirModalPass() {
   document.getElementById('formCambiarPass').reset();
   toggleModal('modalPass', 'fondoModalPass', true);
 }
 
+// cierra el modal de cambio de contraseña
 function cerrarModalPass() {
   toggleModal('modalPass', 'fondoModalPass', false);
 }
 
+// envía la solicitud para actualizar la contraseña del administrador
 async function cambiarPassword(ev) {
   ev.preventDefault();
   if (!validarFormulario(ev.target)) return;
@@ -721,9 +716,7 @@ async function cambiarPassword(ev) {
   }
 }
 
-// ============================================================
-// EXPORTACIÓN A PDF
-// ============================================================
+// genera y descarga un archivo PDF con el reporte de las ventas filtradas
 function exportarPDFVentas() {
   const ventas = obtenerVentasFiltradas();
   if (!ventas.length) {
@@ -770,11 +763,9 @@ function exportarPDFVentas() {
   doc.save(`reporte-ventas-pretta-${Date.now()}.pdf`);
 }
 
-// ============================================================
-// PÁGINA PRINCIPAL (tabla "datos": título, subtítulo, imágenes, mensajes, redes y WhatsApp)
-// ============================================================
-let imagenConfigSeleccionada = null; // archivo elegido ahora (null = no se toca la imagen actual)
+let imagenConfigSeleccionada = null; 
 
+// carga la configuración actual de la página principal desde el servidor
 async function cargarConfiguracionAdmin() {
   try {
     datosCache = await fetchProtegido(`${CONFIG.API_URL}/datos`);
@@ -783,6 +774,7 @@ async function cargarConfiguracionAdmin() {
   }
 }
 
+// abre el modal de configuración de la home y rellena los campos con los datos actuales
 function abrirModalConfig() {
   if (!datosCache) {
     mostrarAviso('Todavía se está cargando la información, probá de nuevo en un segundo');
@@ -807,12 +799,12 @@ function abrirModalConfig() {
   toggleModal('modalConfig', 'fondoModalConfig', true);
 }
 
+// cierra el modal de configuración de la página principal
 function cerrarModalConfig() {
   toggleModal('modalConfig', 'fondoModalConfig', false);
 }
 
-// Agrega una fila de mensaje (título + texto + botón de quitar). Sin límite: se pueden
-// seguir agregando, y en la home se acomodan con scroll horizontal si no entran todos.
+// agrega una línea de mensaje editable en la configuración de la home
 function agregarMensajeConfig(titulo = '', texto = '') {
   const cont = document.getElementById('mensajesConfigContenedor');
   const div = document.createElement('div');
@@ -838,6 +830,7 @@ function agregarMensajeConfig(titulo = '', texto = '') {
   });
 }
 
+// lee los mensajes configurados para la home desde el formulario
 function leerMensajesConfig() {
   return [...document.querySelectorAll('#mensajesConfigContenedor .linea-venta-item')].map((linea) => ({
     titulo: linea.querySelector('.mensaje-cfg-titulo').value.trim(),
@@ -845,8 +838,7 @@ function leerMensajesConfig() {
   }));
 }
 
-// Si se elige un archivo, se previsualiza ese (todavía no se subió y va a REEMPLAZAR a la actual).
-// Si no se tocó el input, se ve la imagen que ya está guardada.
+// previsualiza la imagen seleccionada para la página principal antes de guardarla
 function previsualizarImagenConfig(ev) {
   imagenConfigSeleccionada = ev.target.files[0] || null;
   if (!imagenConfigSeleccionada) {
@@ -858,6 +850,7 @@ function previsualizarImagenConfig(ev) {
   lector.readAsDataURL(imagenConfigSeleccionada);
 }
 
+// muestra la vista previa de la imagen de la home en el modal de configuración
 function mostrarPreviewImagenConfig(url, esNueva = false) {
   const cont = document.getElementById('cfgImagenPreview');
   cont.innerHTML = url
@@ -866,6 +859,7 @@ function mostrarPreviewImagenConfig(url, esNueva = false) {
     : '<p class="texto-sm">Todavía no hay ninguna imagen cargada.</p>';
 }
 
+// guarda los cambios de la configuración de la página principal en el servidor
 async function guardarConfiguracion(ev) {
   ev.preventDefault();
   if (!validarFormulario(ev.target)) return;
@@ -884,7 +878,6 @@ async function guardarConfiguracion(ev) {
   formData.append('facebookUrl', document.getElementById('cfgFacebook').value);
   formData.append('mensajes', JSON.stringify(mensajes));
 
-  // Si no se eligió ninguna imagen nueva, no se manda nada y el backend conserva la actual
   if (imagenConfigSeleccionada) formData.append('imagen', imagenConfigSeleccionada);
 
   try {
@@ -897,10 +890,7 @@ async function guardarConfiguracion(ev) {
   }
 }
 
-
-// ============================================================
-// NAVEGACIÓN ENTRE PANTALLAS (Resumen · Productos · Ventas)
-// ============================================================
+// alterna la vista visible dentro del panel de administración (resumen, productos, ventas, ajustes)
 function mostrarVista(nombre) {
   if (!['resumen', 'productos', 'ventas', 'ajustes'].includes(nombre)) nombre = 'resumen';
   document.querySelectorAll('.vista-admin').forEach((sec) => { sec.hidden = sec.dataset.vista !== nombre; });
@@ -909,27 +899,27 @@ function mostrarVista(nombre) {
   window.scrollTo({ top: 0 });
 }
 
-// ============================================================
-// RESUMEN: facturación, stock para atender y más vendidos
-// ============================================================
 let periodoTop = '30';
 
 const dinero = (n) => `$${(n || 0).toLocaleString('es-AR')}`;
 const escapar = (t) => String(t ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
+// calcula la fecha inicial según el período de tiempo seleccionado para las estadísticas
 function inicioDe(periodo) {
   const d = new Date();
   d.setHours(0, 0, 0, 0);
-  if (periodo === 'semana') d.setDate(d.getDate() - ((d.getDay() + 6) % 7)); // lunes
+  if (periodo === 'semana') d.setDate(d.getDate() - ((d.getDay() + 6) % 7)); 
   if (periodo === 'mes') d.setDate(1);
   return d;
 }
 
+// calcula el monto total y la cantidad de ventas a partir de una fecha de inicio
 function facturacionDesde(desde) {
   const lista = ventasCache.filter((v) => new Date(v.createdAt) >= desde);
   return { monto: lista.reduce((acc, v) => acc + (v.total || 0), 0), cantidad: lista.length };
 }
 
+// calcula el ranking de productos más vendidos según el período de días indicado
 function rankingProductos(dias) {
   let lista = ventasCache;
   if (dias !== 'todo') {
@@ -946,6 +936,7 @@ function rankingProductos(dias) {
   return Object.entries(porNombre).map(([nombre, unidades]) => ({ nombre, unidades })).sort((a, b) => b.unidades - a.unidades).slice(0, 5);
 }
 
+// genera el html para una fila de control de stock en el resumen
 function filaStock(p, etiqueta, clase) {
   return `
     <div class="fila-stock">
@@ -955,6 +946,7 @@ function filaStock(p, etiqueta, clase) {
     </div>`;
 }
 
+// actualiza y dibuja las tarjetas de resumen, alertas de stock y productos más vendidos en el panel
 function renderizarResumen() {
   const poner = (id, texto) => { const el = document.getElementById(id); if (el) el.textContent = texto; };
   [['Hoy', 'hoy'], ['Semana', 'semana'], ['Mes', 'mes']].forEach(([nombre, periodo]) => {
@@ -963,7 +955,6 @@ function renderizarResumen() {
     poner(`kpi${nombre}Cant`, `${f.cantidad} venta${f.cantidad === 1 ? '' : 's'}`);
   });
 
-  // Stock para atender: agotados primero, después los que se están por agotar
   const agotados = productosCache.filter((p) => p.stock === 0);
   const porAgotarse = productosCache.filter((p) => p.stock > 0 && p.stock <= UMBRAL_STOCK_BAJO).sort((a, b) => a.stock - b.stock);
   const contStock = document.getElementById('listaStock');
@@ -980,7 +971,6 @@ function renderizarResumen() {
         + (filas.length > MAX ? `<button type="button" class="btn-enlace-admin" data-ir-vista="productos">Ver ${filas.length - MAX} más en Productos →</button>` : '');
   }
 
-  // Más vendidos
   document.querySelectorAll('#chipsTop [data-top]').forEach((b) => b.classList.toggle('activo', b.dataset.top === periodoTop));
   const ranking = rankingProductos(periodoTop);
   const contTop = document.getElementById('listaTop');
@@ -999,15 +989,13 @@ function renderizarResumen() {
   }
 }
 
-// ============================================================
-// FILTROS DE VENTAS: atajos de fecha, resumen y limpiar
-// ============================================================
 const fechaLocalISO = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 
 function marcarChipRango(rango) {
   document.querySelectorAll('#chipsRango [data-rango]').forEach((b) => b.classList.toggle('activo', b.dataset.rango === rango));
 }
 
+// aplica un rango de fechas preestablecido en los filtros de ventas
 function aplicarRango(rango) {
   const hoy = new Date();
   let desde = '';
@@ -1022,11 +1010,13 @@ function aplicarRango(rango) {
   renderizarVentas();
 }
 
+// limpia los filtros aplicados en la sección de ventas
 function limpiarFiltrosVentas() {
   document.getElementById('filtroOrden').value = '';
   aplicarRango('todo');
 }
 
+// actualiza el texto resumen con la cantidad y el total de las ventas filtradas
 function actualizarResumenFiltro(ventas) {
   const el = document.getElementById('resumenFiltroVentas');
   if (!el) return;
@@ -1036,14 +1026,11 @@ function actualizarResumenFiltro(ventas) {
     : `${ventas.length} venta${ventas.length === 1 ? '' : 's'} · Total ${dinero(total)}`;
 }
 
-// Código fijo de la venta (sale del número guardado en la base, no de la posición en la lista)
+// genera el código visual formateado para una venta
 function codigoVenta(v) {
   return v.numero ? `V-${String(v.numero).padStart(4, '0')}` : `V-${String(v._id).slice(-4).toUpperCase()}`;
 }
 
-// ============================================================
-// VALIDACIÓN DE FORMULARIOS (avisos claros, campo por campo)
-// ============================================================
 function etiquetaDe(campo) {
   const l = campo.id ? document.querySelector(`label[for="${campo.id}"]`) : null;
   return (l ? l.textContent : campo.placeholder || 'Campo').replace('*', '').replace(':', '').trim();
@@ -1061,7 +1048,7 @@ function marcarErrorCampo(campo, mensaje) {
   campo.insertAdjacentHTML('afterend', `<small class="msg-campo-error">${mensaje}</small>`);
 }
 
-// Devuelve true si todo está bien. Si falta algo: marca cada campo, enfoca el primero y avisa cuáles faltan.
+// valida que los campos requeridos de un formulario estén completos correctamente
 function validarFormulario(form) {
   form.querySelectorAll('.campo-error').forEach(limpiarErrorCampo);
   const faltan = [];

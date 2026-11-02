@@ -14,6 +14,7 @@ function mensajeLimiteFotos(actuales) {
     : `Este producto tiene ${actuales} foto${actuales === 1 ? '' : 's'}: solo podés agregar ${lugar} más (máximo ${MAX_IMAGENES}).`;
 }
 
+// lista únicamente los productos activos para mostrar en la tienda pública
 exports.listarPublicos = async (req, res) => {
   try {
     const productos = await Producto.find({ activo: true }).sort({ createdAt: -1 });
@@ -23,12 +24,14 @@ exports.listarPublicos = async (req, res) => {
   }
 };
 
+// obtiene el detalle de un producto en específico si está activo
 exports.obtenerUno = async (req, res) => {
   if (!mongoose.isValidObjectId(req.params.id)) return res.status(400).json({ error: 'ID inválido' });
   const prod = await Producto.findOne({ _id: req.params.id, activo: true });
   prod ? res.json(prod) : res.status(404).json({ error: 'Producto no encontrado' });
 };
 
+// lista todos los productos (activos y ocultos) para el panel de administración
 exports.listarTodos = async (req, res) => {
   try {
     const productos = await Producto.find().sort({ nombre: 1 });
@@ -38,6 +41,7 @@ exports.listarTodos = async (req, res) => {
   }
 };
 
+// crea un producto nuevo subiendo sus imágenes a cloudinary
 exports.crear = async (req, res) => {
   const imagenesSubidas = [];
   try {
@@ -62,6 +66,7 @@ exports.crear = async (req, res) => {
   }
 };
 
+// edita los datos de un producto existente y permite agregar nuevas fotos
 exports.editar = async (req, res) => {
   const imagenesSubidas = [];
   try {
@@ -94,6 +99,7 @@ exports.editar = async (req, res) => {
   }
 };
 
+// borra una foto específica de un producto y la elimina de cloudinary
 exports.eliminarImagen = async (req, res) => {
   try {
     const { id, imagenId } = req.params;
@@ -121,6 +127,7 @@ exports.eliminarImagen = async (req, res) => {
   }
 };
 
+// marca una foto como la principal que se mostrará primero en la tienda
 exports.marcarPrincipal = async (req, res) => {
   try {
     const { id, imagenId } = req.params;
@@ -143,6 +150,7 @@ exports.marcarPrincipal = async (req, res) => {
   }
 };
 
+// elimina un producto de forma definitiva de la base de datos
 exports.eliminar = async (req, res) => {
   try {
     if (!mongoose.Types.ObjectId.isValid(req.params.id)) {

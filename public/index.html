@@ -12,8 +12,10 @@
   <link rel="preconnect" href="https://res.cloudinary.com">
 </head>
 <body>
+  <!-- enlace de accesibilidad para saltar directamente al contenido -->
   <a class="enlace-salto" href="#contenido">Saltar al contenido</a>
 
+  <!-- barra de navegación superior de la tienda -->
   <header class="encabezado">
     <div class="envoltorio">
       <a href="#inicio" class="marca">Pretta Home Deco</a>
@@ -40,7 +42,9 @@
     </div>
   </header>
 
+  <!-- contenido principal de la tienda -->
   <main id="contenido">
+    <!-- sección principal / hero -->
     <section id="inicio" class="hero-unificado">
       <div class="envoltorio">
         <div class="hero-contenido">
@@ -93,6 +97,7 @@
       </div>
     </section>
 
+    <!-- sección del catálogo de productos y filtros -->
     <section id="catalogo" class="seccion">
       <div class="envoltorio">
         <div class="seccion-encabezado">
@@ -114,6 +119,7 @@
       </div>
     </section>
 
+    <!-- sección de contacto y redes sociales -->
     <section id="contacto" class="seccion seccion-arena">
       <div class="envoltorio">
         <div class="seccion-encabezado">
@@ -151,6 +157,7 @@
     </section>
   </main>
 
+  <!-- pie de página -->
   <footer class="pie">
     <div class="envoltorio">
       <span class="pie-marca"> Pretta Home Deco</span>
@@ -165,12 +172,14 @@
     </div>
   </footer>
 
+  <!-- modal para ver el detalle de un producto -->
   <div class="fondo-modal" data-fondo-modal></div>
   <div class="modal-detalle" data-modal-detalle role="dialog" aria-modal="true" aria-label="Detalle del producto">
     <button class="cerrar-modal" data-cerrar-modal aria-label="Cerrar modal">&times;</button>
     <div class="modal-contenido-grid" data-modal-contenido></div>
   </div>
 
+  <!-- panel lateral deslizante del carrito de compras -->
   <div class="fondo-carrito" data-fondo-carrito></div>
   <aside class="panel-carrito" data-panel-carrito role="dialog" aria-label="Carrito de compras">
     <div class="carrito-encabezado">
@@ -193,6 +202,7 @@
     </div>
   </aside>
 
+  <!-- aviso flotante al agregar productos -->
   <div class="aviso" data-aviso>
     <span class="punto-salvia"></span>
     <span>Producto agregado</span>

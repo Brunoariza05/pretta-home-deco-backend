@@ -8,17 +8,20 @@ let temporizador = null;
 const $ = (id) => document.getElementById(id);
 const PASOS = ['formEmail', 'formCodigo', 'formNuevaClave', 'pasoExito'];
 
+// muestra un paso específico del formulario de recuperación y oculta los demás
 function mostrarPaso(id) {
   PASOS.forEach((p) => { $(p).hidden = (p !== id); });
   mostrarMensaje('');
 }
 
+// muestra mensajes informativos o de error en la pantalla de recuperación
 function mostrarMensaje(texto, tipo = 'error') {
   const m = $('mensajeRecuperar');
   m.textContent = texto;
   m.className = 'mensaje-recuperar' + (texto ? ' ' + tipo : '');
 }
 
+// realiza peticiones POST a la api de recuperación de cuentas
 async function pedir(ruta, cuerpo) {
   const res = await fetch(`${API_URL}/recuperacion/${ruta}`, {
     method: 'POST',
@@ -30,12 +33,14 @@ async function pedir(ruta, cuerpo) {
   return data;
 }
 
+// deshabilita temporalmente el botón de envío mientras se procesa la solicitud
 async function conBoton(form, accion) {
   const btn = form.querySelector('button[type="submit"]');
   btn.disabled = true;
   try { await accion(); } catch (err) { mostrarMensaje(err.message); } finally { btn.disabled = false; }
 }
 
+// inicia la cuenta regresiva para poder volver a pedir el código por correo
 function iniciarEsperaReenvio() {
   const btn = $('btnReenviar');
   let restante = ESPERA_REENVIO_SEG;
@@ -54,6 +59,7 @@ function iniciarEsperaReenvio() {
   }, 1000);
 }
 
+// solicita el envío del código numérico al correo ingresado
 async function enviarCodigo() {
   const data = await pedir('solicitar', { email: emailActual });
   $('recEmailMostrado').textContent = emailActual;
@@ -63,6 +69,7 @@ async function enviarCodigo() {
   $('recCodigo').focus();
 }
 
+// inicializa los eventos de la interfaz de recuperación de clave al cargar la página
 document.addEventListener('DOMContentLoaded', () => {
   $('formEmail').addEventListener('submit', (ev) => {
     ev.preventDefault();

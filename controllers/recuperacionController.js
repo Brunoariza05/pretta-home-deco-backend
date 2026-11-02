@@ -13,6 +13,7 @@ const normalizar = (e) => String(e || '').trim().toLowerCase();
 const emailsPermitidos = () => (process.env.RECUPERACION_EMAILS || '').split(',').map(normalizar).filter(Boolean);
 const secretoReset = () => `${process.env.JWT_SECRET}:reset-clave`;
 
+// genera y envía un código numérico por correo para iniciar la recuperación de contraseña
 exports.solicitar = async (req, res) => {
   const MENSAJE = 'Si el correo está autorizado, te enviamos un código. Revisá tu bandeja de entrada (y el spam).';
   const email = normalizar(req.body.email);
@@ -45,6 +46,7 @@ exports.solicitar = async (req, res) => {
   }
 };
 
+// verifica que el código ingresado sea correcto y otorga un token temporal para cambiar la clave
 exports.verificar = async (req, res) => {
   try {
     const email = normalizar(req.body.email);
@@ -77,6 +79,7 @@ exports.verificar = async (req, res) => {
   }
 };
 
+// valida el token temporal de restablecimiento y guarda la nueva contraseña encriptada
 exports.cambiar = async (req, res) => {
   try {
     const { resetToken, nuevaPassword } = req.body;
