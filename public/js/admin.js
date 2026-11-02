@@ -902,7 +902,7 @@ async function guardarConfiguracion(ev) {
 // NAVEGACIÓN ENTRE PANTALLAS (Resumen · Productos · Ventas)
 // ============================================================
 function mostrarVista(nombre) {
-  if (!['resumen', 'productos', 'ventas'].includes(nombre)) nombre = 'resumen';
+  if (!['resumen', 'productos', 'ventas', 'ajustes'].includes(nombre)) nombre = 'resumen';
   document.querySelectorAll('.vista-admin').forEach((sec) => { sec.hidden = sec.dataset.vista !== nombre; });
   document.querySelectorAll('[data-vista-btn]').forEach((b) => b.classList.toggle('activo', b.dataset.vistaBtn === nombre));
   sessionStorage.setItem('pretta_vista', nombre);
@@ -951,7 +951,7 @@ function filaStock(p, etiqueta, clase) {
     <div class="fila-stock">
       <span class="fila-stock-nombre">${escapar(p.nombre)}${p.activo ? '' : ' <small>(oculto)</small>'}</span>
       <span class="badge ${clase}">${etiqueta}</span>
-      <button type="button" class="btn-enlace-admin" onclick="prepararEditarProducto('${p._id}')">Actualizar</button>
+      <button type="button" class="btn-enlace-admin" onclick="prepararEditarProducto('${p._id}')">Modificar</button>
     </div>`;
 }
 

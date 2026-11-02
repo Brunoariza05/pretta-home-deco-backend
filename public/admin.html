@@ -39,17 +39,13 @@
     <header class="encabezado-admin">
       <div class="envoltorio-admin">
         <a href="#" class="marca">Pretta Admin</a>
-        <div class="admin-acciones-usuario">
-          <button type="button" class="btn btn-secundario btn-sm" id="btnAbrirConfig">Editar Página Principal</button>
-          <button type="button" class="btn btn-secundario btn-sm" id="btnAbrirCambiarPass">Cambiar Contraseña</button>
-          <button type="button" class="btn btn-vaciar" id="btnCerrarSesion">Cerrar Sesión</button>
-        </div>
       </div>
       <nav class="nav-admin" aria-label="Secciones del panel">
         <div class="envoltorio-admin nav-admin-interior">
           <button type="button" class="tab-admin activo" data-vista-btn="resumen">Resumen</button>
           <button type="button" class="tab-admin" data-vista-btn="productos">Productos</button>
           <button type="button" class="tab-admin" data-vista-btn="ventas">Ventas</button>
+          <button type="button" class="tab-admin" data-vista-btn="ajustes">Ajustes</button>
         </div>
       </nav>
     </header>
@@ -156,6 +152,24 @@
           <button type="button" id="btnGenerarPDF" class="btn btn-secundario">📄 Exportar PDF Filtrado</button>
         </div>
       </section>
+      <!-- ================= AJUSTES / OTRAS GESTIONES ================= -->
+      <section class="vista-admin" data-vista="ajustes" hidden>
+        <div class="resumen-encabezado"><h2>Otras gestiones</h2></div>
+        <div class="lista-gestiones">
+          <div class="item-gestion">
+            <div class="item-gestion-texto"><strong>Página principal</strong><span>Título, imagen, mensajes y redes de la tienda.</span></div>
+            <button type="button" class="btn btn-secundario btn-sm" id="btnAbrirConfig">Editar</button>
+          </div>
+          <div class="item-gestion">
+            <div class="item-gestion-texto"><strong>Contraseña</strong><span>Cambiá la clave de acceso.</span></div>
+            <button type="button" class="btn btn-secundario btn-sm" id="btnAbrirCambiarPass">Cambiar</button>
+          </div>
+          <div class="item-gestion">
+            <div class="item-gestion-texto"><strong>Sesión</strong><span>Cerra la sesion en este dispositivo.</span></div>
+            <button type="button" class="btn btn-vaciar btn-sm" id="btnCerrarSesion">Cerrar sesión</button>
+          </div>
+        </div>
+      </section>
     </main>
   </div>
 
@@ -181,12 +195,12 @@
           <input type="number" id="prodPrecio" min="0" step="1" required>
         </div>
         <div class="grupo-campo">
-          <label for="prodStock">Stock Inicial <span class="req">*</span></label>
+          <label for="prodStock">Stock<span class="req">*</span></label>
           <input type="number" id="prodStock" min="0" step="1" required>
         </div>
       </div>
       <div class="grupo-campo">
-        <label>Fotos del producto (hasta 5)</label>
+        <label>Fotos del producto (Hasta 5)</label>
         <div id="prodImagenesExistentes" class="miniaturas-producto"></div>
         <input type="file" id="prodImagenes" multiple accept="image/*">
       </div>

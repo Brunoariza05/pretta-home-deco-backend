@@ -382,7 +382,7 @@
 .chip:hover { border-color: #7e9a72; }
 .chip.activo { background: #7e9a72; border-color: #7e9a72; color: #fff; }
 .barra-resumen-filtro { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; font-size: 13px; color: #5f5043; }
-.btn-enlace-admin { background: none; border: none; padding: 4px 2px; font: inherit; font-size: 13px; color: #7e9a72; text-decoration: underline; cursor: pointer; }
+.btn-enlace-admin { background: none; border: none; padding: 4px 2px; font: inherit; font-size: 13px; color: #7e9a72;  cursor: pointer; }
 
 .req { color: #b3382c; font-weight: 700; }
 .nota-obligatorio { margin: -4px 0 10px; font-size: 12px; color: #7a6a5c; }
@@ -406,3 +406,17 @@ main.envoltorio-admin {
   box-sizing: border-box;
 }
 .vista-admin { width: 100%; box-sizing: border-box; }
+
+.lista-gestiones { display: grid; gap: 10px; }
+.item-gestion {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  background: #fff; border: 1px solid #ddcdaf; border-radius: 16px; padding: 14px 16px;
+}
+.item-gestion-texto { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.item-gestion-texto strong { font-size: 15px; color: #3e2e22; }
+.item-gestion-texto span { font-size: 13px; color: #7a6a5c; }
+.item-gestion .btn { flex: 0 0 auto; }
+
+@media (max-width: 480px) {
+  .tab-admin { padding: 10px 10px; font-size: 14px; }
+}
