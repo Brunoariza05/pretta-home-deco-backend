@@ -341,3 +341,68 @@
   font-size: 16px !important; line-height: 1.2 !important;
   -webkit-appearance: none; appearance: none; background-color: #fff;
 }
+
+.nav-admin { background: #fff; border-bottom: 1px solid #ddcdaf; }
+.nav-admin-interior { display: flex; gap: 6px; overflow-x: auto; padding-top: 8px; padding-bottom: 0; }
+.tab-admin {
+  flex: 0 0 auto; padding: 10px 18px; background: none; border: none;
+  border-bottom: 3px solid transparent; font: inherit; font-weight: 600;
+  color: #7a6a5c; cursor: pointer; white-space: nowrap;
+}
+.tab-admin:hover { color: #3e2e22; }
+.tab-admin.activo { color: #3e2e22; border-bottom-color: #7e9a72; }
+.vista-admin[hidden] { display: none !important; }
+.vista-admin { padding-top: 20px; padding-bottom: 32px; }
+
+.resumen-encabezado { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 16px; }
+.resumen-encabezado h2 { margin: 0; }
+.kpis { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-bottom: 16px; }
+.kpi { background: #fff; border: 1px solid #ddcdaf; border-radius: 16px; padding: 14px 16px; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.kpi-titulo { font-size: 13px; color: #7a6a5c; }
+.kpi-monto { font-size: 1.5rem; color: #3e2e22; line-height: 1.2; overflow-wrap: anywhere; }
+.kpi-sub { font-size: 12px; color: #7e9a72; font-weight: 600; }
+.resumen-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; align-items: start; }
+.tarjeta-resumen { background: #fff; border: 1px solid #ddcdaf; border-radius: 16px; padding: 16px; min-width: 0; }
+.tarjeta-resumen h3 { margin: 0 0 10px; font-size: 1.05rem; }
+.tarjeta-resumen-cab { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 10px; }
+.tarjeta-resumen-cab h3 { margin: 0; }
+.resumen-conteo { font-size: 13px; color: #5f5043; margin: 0 0 8px; }
+.vacio-resumen { color: #7a6a5c; font-size: 14px; margin: 6px 0; }
+.fila-stock { display: flex; align-items: center; gap: 8px; padding: 8px 0; border-top: 1px solid #f0e8d8; }
+.fila-stock-nombre { flex: 1 1 auto; min-width: 0; font-size: 14px; overflow-wrap: anywhere; }
+.fila-top { display: flex; align-items: center; gap: 10px; padding: 7px 0; }
+.fila-top-pos { flex: 0 0 24px; height: 24px; border-radius: 50%; background: #eee3cf; color: #3e2e22; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+.fila-top-info { flex: 1 1 auto; min-width: 0; }
+.fila-top-linea { display: flex; justify-content: space-between; gap: 8px; font-size: 14px; }
+.barra-top { height: 6px; background: #f0e8d8; border-radius: 99px; margin-top: 4px; overflow: hidden; }
+.barra-top span { display: block; height: 100%; background: #7e9a72; border-radius: 99px; }
+
+.chips-rango { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { padding: 6px 12px; border: 1px solid #ddcdaf; border-radius: 99px; background: #fff; color: #5f5043; font: inherit; font-size: 13px; cursor: pointer; }
+.chip:hover { border-color: #7e9a72; }
+.chip.activo { background: #7e9a72; border-color: #7e9a72; color: #fff; }
+.barra-resumen-filtro { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; font-size: 13px; color: #5f5043; }
+.btn-enlace-admin { background: none; border: none; padding: 4px 2px; font: inherit; font-size: 13px; color: #7e9a72; text-decoration: underline; cursor: pointer; }
+
+.req { color: #b3382c; font-weight: 700; }
+.nota-obligatorio { margin: -4px 0 10px; font-size: 12px; color: #7a6a5c; }
+.campo-error input, .campo-error select, .campo-error textarea { border-color: #b3382c !important; background: #fff7f6; }
+.msg-campo-error { display: block; margin-top: 3px; font-size: 12px; color: #b3382c; }
+
+@media (max-width: 768px) {
+  .kpis { grid-template-columns: minmax(0, 1fr); }
+  .kpi { flex-direction: row; align-items: baseline; justify-content: space-between; flex-wrap: wrap; }
+  .kpi-monto { font-size: 1.25rem; }
+  .resumen-grid { grid-template-columns: minmax(0, 1fr); }
+}
+
+.encabezado-admin .envoltorio-admin,
+.nav-admin .nav-admin-interior,
+main.envoltorio-admin {
+  width: 100%;
+  max-width: 1100px;
+  margin-left: auto;
+  margin-right: auto;
+  box-sizing: border-box;
+}
+.vista-admin { width: 100%; box-sizing: border-box; }

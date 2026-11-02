@@ -12,13 +12,14 @@
 </head>
 <body class="body-admin">
 
+  <!-- Login -->
   <div id="seccionLogin" class="contenedor-login">
     <div class="tarjeta-login">
       <div class="login-encabezado">
         <h2>Pretta Home Deco</h2>
         <p>Panel de Administración</p>
       </div>
-      <form id="formLogin">
+      <form id="formLogin" novalidate>
         <div class="grupo-campo">
           <label for="loginUsuario">Usuario</label>
           <input type="text" id="loginUsuario" required placeholder="Ingresá tu usuario">
@@ -33,48 +34,81 @@
     </div>
   </div>
 
+  <!-- Dashboard Principal -->
   <div id="seccionDashboard" class="contenedor-dashboard" style="display: none;">
     <header class="encabezado-admin">
       <div class="envoltorio-admin">
-        <a href="#" class="marca">Pretta Admin </a>
+        <a href="#" class="marca">Pretta Admin</a>
         <div class="admin-acciones-usuario">
           <button type="button" class="btn btn-secundario btn-sm" id="btnAbrirConfig">Editar Página Principal</button>
           <button type="button" class="btn btn-secundario btn-sm" id="btnAbrirCambiarPass">Cambiar Contraseña</button>
           <button type="button" class="btn btn-vaciar" id="btnCerrarSesion">Cerrar Sesión</button>
         </div>
       </div>
+      <nav class="nav-admin" aria-label="Secciones del panel">
+        <div class="envoltorio-admin nav-admin-interior">
+          <button type="button" class="tab-admin activo" data-vista-btn="resumen">Resumen</button>
+          <button type="button" class="tab-admin" data-vista-btn="productos">Productos</button>
+          <button type="button" class="tab-admin" data-vista-btn="ventas">Ventas</button>
+        </div>
+      </nav>
     </header>
 
-    <main class="envoltorio-admin dashboard-grid">
-      <section class="panel-columna">
+    <main class="envoltorio-admin">
+
+      <!-- ================= RESUMEN (pantalla principal) ================= -->
+      <section class="vista-admin" data-vista="resumen">
+        <div class="resumen-encabezado">
+          <h2>Resumen</h2>
+          <div class="botones-columna">
+            <button type="button" class="btn btn-salvia btn-sm" id="btnResumenCargarVenta">+ Cargar Venta</button>
+            <button type="button" class="btn btn-secundario btn-sm" id="btnResumenCargarProducto">+ Cargar Producto</button>
+          </div>
+        </div>
+
+        <div class="kpis">
+          <div class="kpi"><span class="kpi-titulo">Facturación de hoy</span><strong class="kpi-monto" id="kpiHoyMonto">$0</strong><span class="kpi-sub" id="kpiHoyCant">0 ventas</span></div>
+          <div class="kpi"><span class="kpi-titulo">Esta semana</span><strong class="kpi-monto" id="kpiSemanaMonto">$0</strong><span class="kpi-sub" id="kpiSemanaCant">0 ventas</span></div>
+          <div class="kpi"><span class="kpi-titulo">Este mes</span><strong class="kpi-monto" id="kpiMesMonto">$0</strong><span class="kpi-sub" id="kpiMesCant">0 ventas</span></div>
+        </div>
+
+        <div class="resumen-grid">
+          <article class="tarjeta-resumen">
+            <h3>Stock para atender</h3>
+            <div id="listaStock"></div>
+          </article>
+          <article class="tarjeta-resumen">
+            <div class="tarjeta-resumen-cab">
+              <h3>Más vendidos</h3>
+              <div class="chips-rango" id="chipsTop" role="group" aria-label="Período">
+                <button type="button" class="chip" data-top="7">7 días</button>
+                <button type="button" class="chip activo" data-top="30">30 días</button>
+                <button type="button" class="chip" data-top="todo">Todo</button>
+              </div>
+            </div>
+            <div id="listaTop"></div>
+          </article>
+        </div>
+      </section>
+
+      <!-- ================= PRODUCTOS ================= -->
+      <section class="vista-admin panel-columna" data-vista="productos" hidden>
         <div class="panel-encabezado-col">
           <h2>Listado de Productos</h2>
           <div class="botones-columna">
             <button type="button" class="btn btn-salvia btn-sm" id="btnAbrirCrearProducto">+ Cargar Producto</button>
           </div>
         </div>
-
         <div class="tabla-contenedor">
           <table class="tabla-admin">
-            <thead>
-              <tr>
-                <th>Imagen</th>
-                <th>Nombre</th>
-                <th>Precio</th>
-                <th>Stock</th>
-                <th>Estado</th>
-                <th>Visible</th>
-                <th>Acciones</th>
-              </tr>
-            </thead>
-            <tbody id="tablaProductosBody">
-              <tr><td colspan="7" class="texto-centro">Cargando productos...</td></tr>
-            </tbody>
+            <thead><tr><th>Imagen</th><th>Nombre</th><th>Precio</th><th>Stock</th><th>Estado</th><th>Visible</th><th>Acciones</th></tr></thead>
+            <tbody id="tablaProductosBody"><tr><td colspan="7" class="texto-centro">Cargando productos...</td></tr></tbody>
           </table>
         </div>
       </section>
 
-      <section class="panel-columna">
+      <!-- ================= VENTAS ================= -->
+      <section class="vista-admin panel-columna" data-vista="ventas" hidden>
         <div class="panel-encabezado-col">
           <h2>Listado de Ventas</h2>
           <div class="botones-columna">
@@ -83,20 +117,20 @@
         </div>
 
         <div class="contenedor-filtros-ventas">
-          <div class="fila-filtros">
-            <div class="grupo-campo">
-              <label for="filtroFechaDesde">Desde:</label>
-              <input type="date" id="filtroFechaDesde">
-            </div>
-            <div class="grupo-campo">
-              <label for="filtroFechaHasta">Hasta:</label>
-              <input type="date" id="filtroFechaHasta">
-            </div>
+          <div class="chips-rango" id="chipsRango" role="group" aria-label="Rango de fechas">
+            <button type="button" class="chip" data-rango="hoy">Hoy</button>
+            <button type="button" class="chip" data-rango="7">Últimos 7 días</button>
+            <button type="button" class="chip" data-rango="mes">Este mes</button>
+            <button type="button" class="chip" data-rango="mes-pasado">Mes pasado</button>
+            <button type="button" class="chip activo" data-rango="todo">Todo</button>
           </div>
-
+          <div class="fila-filtros">
+            <div class="grupo-campo"><label for="filtroFechaDesde">Desde</label><input type="date" id="filtroFechaDesde"></div>
+            <div class="grupo-campo"><label for="filtroFechaHasta">Hasta</label><input type="date" id="filtroFechaHasta"></div>
+          </div>
           <div class="fila-filtros">
             <div class="grupo-campo">
-              <label for="filtroOrden">Filtro por fecha y precio:</label>
+              <label for="filtroOrden">Ordenar por</label>
               <select id="filtroOrden">
                 <option value="">Por defecto</option>
                 <option value="fecha_desc">Fecha: más reciente a más antigua</option>
@@ -106,25 +140,18 @@
               </select>
             </div>
           </div>
+          <div class="barra-resumen-filtro">
+            <span id="resumenFiltroVentas">—</span>
+            <button type="button" class="btn-enlace-admin" id="btnLimpiarFiltros">Limpiar filtros</button>
+          </div>
         </div>
 
         <div class="tabla-contenedor">
           <table class="tabla-admin">
-            <thead>
-              <tr>
-                <th>Código</th>
-                <th>Productos</th>
-                <th>Total</th>
-                <th>Fecha</th>
-                <th>Acciones</th>
-              </tr>
-            </thead>
-            <tbody id="tablaVentasBody">
-              <tr><td colspan="5" class="texto-centro">Cargando ventas...</td></tr>
-            </tbody>
+            <thead><tr><th>Código</th><th>Productos</th><th>Total</th><th>Fecha</th><th>Acciones</th></tr></thead>
+            <tbody id="tablaVentasBody"><tr><td colspan="5" class="texto-centro">Cargando ventas...</td></tr></tbody>
           </table>
         </div>
-
         <div class="acciones-exportar">
           <button type="button" id="btnGenerarPDF" class="btn btn-secundario">📄 Exportar PDF Filtrado</button>
         </div>
@@ -132,27 +159,29 @@
     </main>
   </div>
 
+  <!-- Modales -->
   <div class="fondo-modal" id="fondoModalProducto"></div>
   <div class="modal-detalle modal-admin" id="modalProducto" role="dialog">
     <button class="cerrar-modal" id="btnCerrarModalProducto">&times;</button>
     <h2 id="modalProductoTitulo">Cargar Producto</h2>
-    <form id="formProducto" enctype="multipart/form-data">
+    <p class="nota-obligatorio"><span class="req">*</span> Campo obligatorio</p>
+    <form id="formProducto" novalidate enctype="multipart/form-data">
       <input type="hidden" id="prodId">
       <div class="grupo-campo">
-        <label for="prodNombre">Nombre *</label>
+        <label for="prodNombre">Nombre <span class="req">*</span></label>
         <input type="text" id="prodNombre" required>
       </div>
       <div class="grupo-campo">
-        <label for="prodDescripcion">Descripción *</label>
+        <label for="prodDescripcion">Descripción <span class="req">*</span></label>
         <textarea id="prodDescripcion" rows="3" required></textarea>
       </div>
       <div class="grid-2-col">
         <div class="grupo-campo">
-          <label for="prodPrecio">Precio ($) *</label>
+          <label for="prodPrecio">Precio ($) <span class="req">*</span></label>
           <input type="number" id="prodPrecio" min="0" step="1" required>
         </div>
         <div class="grupo-campo">
-          <label for="prodStock">Stock Inicial *</label>
+          <label for="prodStock">Stock Inicial <span class="req">*</span></label>
           <input type="number" id="prodStock" min="0" step="1" required>
         </div>
       </div>
@@ -174,7 +203,7 @@
   <div class="modal-detalle modal-admin" id="modalVenta" role="dialog">
     <button class="cerrar-modal" id="btnCerrarModalVenta">&times;</button>
     <h2 id="tituloModalVenta">Registrar Venta</h2>
-    <form id="formVenta">
+    <form id="formVenta" novalidate>
       <div id="lineasVentaContenedor"></div>
       <button type="button" class="btn btn-secundario btn-sm" id="btnAgregarLineaVenta" style="margin-bottom: 16px;">+ Agregar otro producto</button>
 
@@ -191,30 +220,33 @@
   <div class="modal-detalle modal-admin" id="modalPass" role="dialog">
     <button class="cerrar-modal" id="btnCerrarModalPass">&times;</button>
     <h2>Cambiar Contraseña</h2>
-    <form id="formCambiarPass">
+    <p class="nota-obligatorio"><span class="req">*</span> Campo obligatorio</p>
+    <form id="formCambiarPass" novalidate>
       <div class="grupo-campo">
-        <label for="passActual">Contraseña Actual *</label>
+        <label for="passActual">Contraseña Actual <span class="req">*</span></label>
         <input type="password" id="passActual" required>
       </div>
       <div class="grupo-campo">
-        <label for="passNueva">Nueva Contraseña *</label>
+        <label for="passNueva">Nueva Contraseña <span class="req">*</span></label>
         <input type="password" id="passNueva" required minlength="6">
       </div>
       <button type="submit" class="btn btn-salvia btn-ancho">Actualizar Contraseña</button>
     </form>
   </div>
 
+  <!-- Modal: Editar Página Principal (tabla "datos") -->
   <div class="fondo-modal" id="fondoModalConfig"></div>
   <div class="modal-detalle modal-admin" id="modalConfig" role="dialog">
     <button class="cerrar-modal" id="btnCerrarModalConfig">&times;</button>
     <h2>Editar Página Principal</h2>
-    <form id="formConfig" enctype="multipart/form-data">
+    <p class="nota-obligatorio"><span class="req">*</span> Campo obligatorio</p>
+    <form id="formConfig" novalidate enctype="multipart/form-data">
       <div class="grupo-campo">
-        <label for="cfgTitulo">Título *</label>
+        <label for="cfgTitulo">Título <span class="req">*</span></label>
         <input type="text" id="cfgTitulo" required>
       </div>
       <div class="grupo-campo">
-        <label for="cfgSubtitulo">Subtítulo *</label>
+        <label for="cfgSubtitulo">Subtítulo <span class="req">*</span></label>
         <textarea id="cfgSubtitulo" rows="2" required></textarea>
       </div>
 
@@ -232,7 +264,7 @@
 
       <div class="grid-2-col">
         <div class="grupo-campo">
-          <label for="cfgWhatsapp">Número de WhatsApp *</label>
+          <label for="cfgWhatsapp">Número de WhatsApp <span class="req">*</span></label>
           <input type="text" id="cfgWhatsapp" placeholder="5493516519583" required>
         </div>
         <div class="grupo-campo">
